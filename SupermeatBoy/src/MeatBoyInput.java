@@ -5,12 +5,13 @@ import java.util.Arrays;
 
 
 public class MeatBoyInput implements KeyListener {
-	private boolean[] keys = new boolean[256];
+	private boolean[] keys = new boolean[256];	//contains the status of all keyboard keys
 	
 	public MeatBoyInput(Component c){
 		c.addKeyListener(this);
 		Arrays.fill(keys,false);
 	}
+	
 	public boolean isKeyPressed( int key )
 	{
 		if( key >= 0 && key < keys.length )
@@ -18,14 +19,14 @@ public class MeatBoyInput implements KeyListener {
 		else
 			return false;
 	}
-	@Override
+	//@Override
 	public void keyTyped(KeyEvent e) {}
-	@Override
+	//@Override
 	public void keyPressed(KeyEvent e) {
 		if( e.getKeyCode() >= 0 && e.getKeyCode() < keys.length )
 			keys[e.getKeyCode()] = true;
 	}
-	@Override
+	//@Override
 	public void keyReleased(KeyEvent e) {
 		if( e.getKeyCode() >= 0 && e.getKeyCode() < keys.length )
 			keys[e.getKeyCode()] = false;

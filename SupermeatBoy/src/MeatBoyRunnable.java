@@ -4,15 +4,11 @@ import java.awt.event.KeyEvent;
 public class MeatBoyRunnable implements Runnable {
 	private MeatBoyInput input;
 	private MeatBoy meatboy;
-	private double dx;	//needs to eventually slow to a stop, rather than immediately decrease to 0. Needs implementation below
-	private double dy;  //needs toeventually slow to a stop, rather than immediately decrease to 0. Needs implementation below
 	public MeatBoyRunnable(MeatBoyInput i, MeatBoy m){
-		dx =.25;
-		dy=.25;
 		input=i;
 		meatboy =m;
 	}
-	@Override
+	//@Override
 	public void run() {
 		while(meatboy.isAlive()){
 			if(input.isKeyPressed(KeyEvent.VK_LEFT)){
@@ -24,7 +20,7 @@ public class MeatBoyRunnable implements Runnable {
 			else{
 				meatboy.setXVel(0);
 			}
-			if(input.isKeyPressed(KeyEvent.VK_UP)){
+			if(input.isKeyPressed(KeyEvent.VK_UP)){		//if up is pressed, set inAir to true, and do the physics/gravity stuff. 
 				meatboy.setYVel(-2);
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_DOWN)){

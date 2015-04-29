@@ -6,20 +6,22 @@ import java.io.IOException;
 import javax.swing.*;
 
 
-public class SupermeatBoyFrame extends JFrame implements ActionListener{
+public class MeatBoyFrame extends JFrame implements ActionListener{
 	private Timer time;
 	private MeatBoy player;
 	public static void main(String[] args) throws IOException{
-		SupermeatBoyFrame mb = new SupermeatBoyFrame();
+		MeatBoyFrame mb = new MeatBoyFrame();
+		
 	}
-	public SupermeatBoyFrame() throws IOException {
+	public MeatBoyFrame() throws IOException {
 		setSize(600,600);
-		player = new MeatBoy(this);
+		player = new MeatBoy(this);	
 		setTitle("Super Meat Boy");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		time=new Timer(5,this);
 		time.start();
 		setVisible(true);
+		
 	}
 	public void update(){
 		player.move();
@@ -28,7 +30,10 @@ public class SupermeatBoyFrame extends JFrame implements ActionListener{
 		super.paint(g);
 		try {
 			player.draw(g);
-		} catch (IOException e) {e.printStackTrace();}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	}
 	public void actionPerformed(ActionEvent e){
 		update();

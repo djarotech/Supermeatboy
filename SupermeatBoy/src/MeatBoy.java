@@ -2,6 +2,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -21,19 +22,22 @@ public class MeatBoy {
 	private double xVel;
 	private double yVel;
 	private Rectangle hitbox;
-	private double slowToStop;
 	private int frame_width;
 	private int frame_height;
 	private MeatBoyInput input;
 	private boolean alive;
-	public MeatBoy(Component c){
-		frame_height=c.getHeight();
-		frame_width=c.getWidth();
-		slowToStop=.2;
+	private Image meatboy;
+	private boolean inAir;
+	public MeatBoy(Component c) throws IOException{
+		frame_height=600;
+		frame_width=600;
 		xPos=500;
 		yPos=500;
 		alive=true;
-		hitbox = new Rectangle(xPos,yPos,20,20);
+		inAir=false;
+		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
+		//meatboy =Toolkit.getDefaultToolkit().createImage("meatboy.jpg");
+		meatboy =ImageIO.read(new File("src/meatboy.jpg"));
 		input= new MeatBoyInput(c);
 		Thread movement = new Thread(new MeatBoyRunnable(input,this));
 		movement.start();
@@ -46,7 +50,7 @@ public class MeatBoy {
 			xPos=frame_width-MEATBOY_WIDTH;
 		}
 		else if(yPos+yVel<40){
-			yPos=40;
+			yPos=40; //appx position below the title panel
 		}
 		else if(yPos+yVel>frame_height-MEATBOY_HEIGHT){
 			yPos=frame_height-MEATBOY_HEIGHT;
@@ -56,8 +60,8 @@ public class MeatBoy {
 			yPos+=yVel;
 		}
 	} 
-	public void draw(Graphics g) throws IOException{
-		Image meatboy =ImageIO.read(new File("src/meatboy.jpg"));
+	public void draw(Graphics g) throws IOException {
+		//Image meatboy =Toolkit.getDefaultToolkit().createImage("src/meatboy.jpg");
 		g.drawImage(meatboy,xPos,yPos,MEATBOY_HEIGHT,MEATBOY_WIDTH, null);
 	}
 	public void setYVel(double newVel){
@@ -74,5 +78,14 @@ public class MeatBoy {
 	}
 	public boolean isAlive(){
 		return alive;
+	}
+	public int getX(){
+		return xPos;
+	}
+	public int getY(){
+		return yPos;
+	}
+	public boolean isInAir(){
+		return inAir;
 	}
 }
