@@ -13,8 +13,8 @@ public class SupermeatBoyFrame extends JFrame implements ActionListener{
 		SupermeatBoyFrame mb = new SupermeatBoyFrame();
 	}
 	public SupermeatBoyFrame() throws IOException {
+		setSize(600,600);
 		player = new MeatBoy(this);
-		setSize(500,600);
 		setTitle("Super Meat Boy");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		time=new Timer(5,this);
@@ -22,7 +22,7 @@ public class SupermeatBoyFrame extends JFrame implements ActionListener{
 		setVisible(true);
 	}
 	public void update(){
-		
+		player.move();
 	}
 	public void paint(Graphics g){
 		super.paint(g);

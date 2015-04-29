@@ -7,71 +7,72 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 
-public class MeatBoy implements KeyListener{
+public class MeatBoy {
+	private final int MEATBOY_WIDTH =20;
+	private final int MEATBOY_HEIGHT =20;
 	private int xPos;
 	private int yPos;
-	private int xVel;
-	private int yVel;
+	private double xVel;
+	private double yVel;
 	private Rectangle hitbox;
+	private double slowToStop;
+	private int frame_width;
+	private int frame_height;
+	private MeatBoyInput input;
+	private boolean alive;
 	public MeatBoy(Component c){
-		xPos=50;
-		yPos=50;
+		frame_height=c.getHeight();
+		frame_width=c.getWidth();
+		slowToStop=.2;
+		xPos=500;
+		yPos=500;
+		alive=true;
 		hitbox = new Rectangle(xPos,yPos,20,20);
-		c.addKeyListener(this);
+		input= new MeatBoyInput(c);
+		Thread movement = new Thread(new MeatBoyRunnable(input,this));
+		movement.start();
 	}
 	public void move(){
-		if(xPos+xVel<0||xPos+xVel>600){
-			xVel=0;
+		if(xPos+xVel<0){
 			xPos=0;
 		}
-		if(yPos+yVel<0||yPos+yVel>600){
-			yVel=0;
-			yPos=0;
+		else if(xPos+xVel>frame_width-MEATBOY_WIDTH){
+			xPos=frame_width-MEATBOY_WIDTH;
 		}
-		xPos+=xVel;
-		yPos+=yVel;
-	}
+		else if(yPos+yVel<40){
+			yPos=40;
+		}
+		else if(yPos+yVel>frame_height-MEATBOY_HEIGHT){
+			yPos=frame_height-MEATBOY_HEIGHT;
+		}
+		else{
+			xPos+=xVel;
+			yPos+=yVel;
+		}
+	} 
 	public void draw(Graphics g) throws IOException{
 		Image meatboy =ImageIO.read(new File("src/meatboy.jpg"));
-		g.drawImage(meatboy,xPos,yPos,20,20, null);
+		g.drawImage(meatboy,xPos,yPos,MEATBOY_HEIGHT,MEATBOY_WIDTH, null);
 	}
-	@Override
-	public void keyTyped(KeyEvent e) {}
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int key = e.getKeyCode();
-		if(key==KeyEvent.VK_UP){
-			yVel=1;
-		}
-		if(key==KeyEvent.VK_LEFT){
-			xVel=-1; 
-		}
-		if(key==KeyEvent.VK_RIGHT){
-			xVel=1;
-		}
-		if(key==KeyEvent.VK_DOWN){
-			yVel=-1;
-		}
+	public void setYVel(double newVel){
+		yVel = newVel;
 	}
-	@Override
-	public void keyReleased(KeyEvent e) {
-		int key = e.getKeyCode();
-		if(key==KeyEvent.VK_UP){
-			yVel=0;
-		}
-		if(key==KeyEvent.VK_LEFT){
-			xVel=0; 
-		}
-		if(key==KeyEvent.VK_RIGHT){
-			xVel=0;
-		}
-		if(key==KeyEvent.VK_DOWN){
-			yVel=0;
-		}
+	public void setXVel(double newVel){
+		xVel=newVel;
+	}
+	public double getXVel(){
+		return xVel;
+	}
+	public double getYVel(){
+		return yVel;
+	}
+	public boolean isAlive(){
+		return alive;
 	}
 }
