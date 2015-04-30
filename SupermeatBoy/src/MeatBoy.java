@@ -26,6 +26,9 @@ public class MeatBoy {
 	private int frame_height;
 	private MeatBoyInput input;
 	private boolean alive;
+	
+	private String meatBoyStatus; // is he on a wall?
+	
 	public MeatBoy(Component c){
 		frame_height=c.getHeight();
 		frame_width=c.getWidth();
@@ -34,6 +37,7 @@ public class MeatBoy {
 		yPos=500;
 		alive=true;
 		hitbox = new Rectangle(xPos,yPos,20,20);
+		meatBoyStatus = "none";// starts airborne
 		input= new MeatBoyInput(c);
 		Thread movement = new Thread(new MeatBoyRunnable(input,this));
 		movement.start();
@@ -72,6 +76,27 @@ public class MeatBoy {
 	public double getYVel(){
 		return yVel;
 	}
+	
+	public int getXPos(){
+		return xPos;
+	}
+	
+	public int getYPos(){
+		return yPos;
+	}
+	
+	// sets whether he is touching a wall or airborne
+	public void setMeatBoyStatus(String s)
+	{
+		meatBoyStatus = s;
+	}
+	
+	// gets whether he is touching a wall or airborne
+	public String getMeatBoyStatus()
+	{
+		return meatBoyStatus;
+	}
+	
 	public boolean isAlive(){
 		return alive;
 	}
