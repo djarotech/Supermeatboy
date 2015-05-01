@@ -1,43 +1,20 @@
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
 
-public class MeatBoyFrame extends JFrame implements ActionListener{
-	private Timer time;
-	private MeatBoy player;
-	public static void main(String[] args) throws IOException{
-		MeatBoyFrame mb = new MeatBoyFrame();
-		
-	}
-	public MeatBoyFrame() throws IOException {
+public class MeatBoyFrame extends JFrame {
+	public MeatBoyFrame() {
+		MeatBoyLevel level1 = new MeatBoyLevel(this);
 		setSize(600,600);
-		player = new MeatBoy(this);	
 		setTitle("Super Meat Boy");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
-		time=new Timer(5,this);
-		time.start();
+		setLayout(new BorderLayout());
+		add(level1,BorderLayout.CENTER);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
-		
 	}
-	public void update(){
-		player.move();
+	public static void main(String[] args) {
+		new MeatBoyFrame();
+
 	}
-	public void paint(Graphics g){
-		super.paint(g);
-		try {
-			player.draw(g);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
-	public void actionPerformed(ActionEvent e){
-		update();
-		repaint();
-	}
-	
 }
