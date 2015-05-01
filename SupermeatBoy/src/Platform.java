@@ -35,6 +35,7 @@ public class Platform {
 	public Rectangle getHitbox(){
 		return platformHitbox;
 	}
+	//coordinates backwards
 	public int getTop(){
 		return yCoord;
 	}
@@ -42,7 +43,7 @@ public class Platform {
 		return xCoord;
 	}
 	public int getRight(){
-		return yCoord+width;
+		return xCoord+width;
 	}
 	public int getBottom(){
 		return yCoord+height;

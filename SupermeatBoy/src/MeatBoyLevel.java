@@ -18,10 +18,22 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	public MeatBoyLevel(Component c)   {
 		platformList = new ArrayList<Platform>();
 		for(int i=0;i<4;i++){
-			Platform plat = new Platform(i*50+300,450,50,50);
+			for (int i2 = 0; i2<4; i2++)
+			{
+			Platform plat = new Platform(i*50+300,400-i2*100,50,50);
 			plat.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
 			platformList.add(plat);
+			}
+			Platform test = new Platform(130,350-i*50,50,50);
+			test.setColor(Color.GREEN);
+			platformList.add(test);
 		}
+		Platform test = new Platform(130,450,50,50);
+		test.setColor(Color.GREEN);
+		platformList.add(test);
+		Platform ground = new Platform(50,500,450,50);
+		ground.setColor(Color.GREEN);
+		platformList.add(ground);
 		player = new MeatBoy(c,this);	
 		time=new Timer(17,this);
 		time.start();
