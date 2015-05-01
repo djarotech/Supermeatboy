@@ -34,29 +34,43 @@ public class MeatBoy {
 	private double xVel;
 	private double yVel;
 	
+	private int standingLeft;
+	private int standingRight;
+	
+	//touching wall restrictions
+	private boolean cannotLeft;
+	private boolean cannotRight;
+	
+	
 	private Graphics offgc;
     private BufferedImage offscreen;
     private double gravity;
-    private int player_ground; // y position, where the meatboy is, is he on a platform?
-    private int stage_ground; // where the bottom of the stage is
     
 	public MeatBoy(Component c,MeatBoyLevel lev) {
+		cannotLeft = false;
+		cannotRight = false;
+		
 		gravity =2.5;
 		offscreen = new BufferedImage(MEATBOY_HEIGHT,MEATBOY_WIDTH,BufferedImage.TYPE_INT_RGB);
 		offgc = offscreen.getGraphics();
 		level=lev;
 		platforms = level.getPlatforms();
 		offscreen=null;
-		xPos=200;
-		yPos=500;
-		player_ground=stage_ground=yPos;
+		xPos=100;
+		yPos=100;
 		alive=true;
-		inAir=false;
+		inAir=true;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
 		meatboy =Toolkit.getDefaultToolkit().createImage("src/meatboy.jpg");
 		input= new MeatBoyInput(c);
+		Platform standingPlatform = new Platform(0,0,0,0);
 	}
 	public void move(){
+		if(input.isKeyPressed(KeyEvent.VK_R)){
+			xPos = 100;
+			yPos = 100;
+			inAir = true;
+		}
 		if(xPos+xVel<0){
 			xPos=0;
 		}
@@ -72,30 +86,34 @@ public class MeatBoy {
 		else{
 			if(!inAir){
 				if(input.isKeyPressed(KeyEvent.VK_UP)){
-					yVel=-30;
+					yVel=-22;
 					inAir=true;
 				}
 				if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 					xVel=10;
+					if (cannotRight)
+						xVel=0;
 				}
 				else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 					xVel=-10;
+					if(cannotLeft)
+						xVel = 0;
 				}
 				else
 					xVel=0;	
 			}
-			else if(yPos+yVel>=stage_ground){
-				inAir=false;
-				yVel=0;
-				yPos=stage_ground;
-			}
+
 			else{
 				
 				if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 					xVel=10;
+					if (cannotRight)
+						xVel=0;
 				}
 				else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 					xVel=-10;
+					if(cannotLeft)
+						xVel = 0;
 				}
 				else
 					xVel=0;
@@ -104,18 +122,59 @@ public class MeatBoy {
 			xPos+=xVel;
 			yPos+=yVel;
 			hitbox = new Rectangle(xPos,yPos,MEATBOY_HEIGHT, MEATBOY_WIDTH); //hitboxs moves with it
-			
+			cannotRight = false;
+			cannotLeft = false;
+			//System.out.println("" + inAir + xPos + " " + yPos);
 			for(int i=0;i<platforms.size();i++){
-				if(hitbox.intersects(platforms.get(i).getHitbox())){ //for collision detection, people use intersect, of the rectangle class
-					player_ground=platforms.get(i).getTop();	//This section assumes that the collision occurred on the top
-					yPos=player_ground-MEATBOY_HEIGHT;			// of the platform. This part needs a lot of work, check the sides and bottoms
-					yVel=0;										// also, currently, meatboy is able to jump off a platform but not walk off.
-					inAir=false;								
+				Platform temp = platforms.get(i);
+				if(hitbox.intersects(temp.getHitbox())){ //for collision detection, people use intersect, of the rectangle class
+					//left wall case
+					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=10 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom())
+					{
+						System.out.println("Left" + i);
+						xPos = temp.getLeft()-MEATBOY_WIDTH;
+						cannotRight = true;
+						
+					}
+					//right wall case
+					else if (Math.abs(xPos-temp.getRight())<=10 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom())
+					{
+						System.out.println("Right" + i);
+						xPos = temp.getRight();
+						cannotLeft = true;
+						
+					}
+					//top case
+					else if (xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && Math.abs(yPos+MEATBOY_HEIGHT-temp.getTop())<=50)
+					{						
+						System.out.println("Top" + i);
+						yPos = temp.getTop()-MEATBOY_HEIGHT;
+						yVel = 0;
+						standingLeft = temp.getLeft();
+						standingRight = temp.getRight();
+						inAir=false;	
+					}
+					//bottom case
+					else if (xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
+					{
+						System.out.println("Bottom" + i);
+						yPos = temp.getBottom();
+						yVel = 0;
+					}							
+				}
+				else
+				{
+					if(!inAir && (xPos<standingLeft || xPos>standingRight))
+					{
+						inAir = true;
+						
+					}
 				}
 			}
 			
 		}
-	} 
+	}
+
 	public void draw(Graphics g) {
 		offscreen = new BufferedImage(MEATBOY_HEIGHT,MEATBOY_WIDTH,BufferedImage.TYPE_INT_RGB);
 		offgc = offscreen.getGraphics();
