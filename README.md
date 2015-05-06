@@ -1,13 +1,11 @@
-#To do:
--walljumping
+#To do: number of(*) means priority level
+**walljumping
 
--fix collision. Problem with checking the top for collisions. What does the 50 mean?
+****Fix collision
 
--Make a gui level editor to create our levels. Drag and drop different types of platforms. Write out the platform objects to an xml file, then read the xml file in each level.
-
--implement tiled and tilemaps.
+****implement tiled and tilemaps.
 	
--different types of platforms(subclasses).
+**different types of platforms(subclasses).
 	Type:
 
 	-the platforms pairs that switch, one becoming invisible, the other becoming visible
