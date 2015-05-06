@@ -5,8 +5,8 @@ import javax.swing.JFrame;
 
 public class MeatBoyFrame extends JFrame {
 	public MeatBoyFrame() {
+		setSize(1000,1000);
 		MeatBoyLevel level1 = new MeatBoyLevel(this);
-		setSize(600,600);
 		setTitle("Super Meat Boy");
 		setLayout(new BorderLayout());
 		add(level1,BorderLayout.CENTER);

@@ -20,38 +20,48 @@ public class Platform {
 	private int height;
 	private Color color;
 	private Rectangle platformHitbox;
+	private int xscroll;
+	private int yscroll;
+
 	public Platform(int x, int y, int w, int h){
+		xscroll=0;
+		yscroll=0;
 		color = Color.BLACK;
 		xCoord = x;
 		yCoord = y;
 		width = w;
 		height = h;
 		platformHitbox = new Rectangle(xCoord,yCoord,width,height);
+
 	}
 	public void draw(Graphics g) {
 		g.setColor(color);
-		g.fillRect(xCoord,yCoord,width,height);
+		g.fillRect(xCoord-xscroll,yCoord-yscroll,width,height);
+		platformHitbox = new Rectangle(xCoord,yCoord,width,height);
 	}
 	public Rectangle getHitbox(){
 		return platformHitbox;
 	}
-	//coordinates backwards
 	public int getTop(){
-		return yCoord;
+		return platformHitbox.y;
 	}
 	public int getLeft(){
-		return xCoord;
+		return platformHitbox.x;
 	}
 	public int getRight(){
-		return xCoord+width;
+		return platformHitbox.x+width;
 	}
 	public int getBottom(){
-		return yCoord+height;
+		return platformHitbox.y+height;
 	}
-	public void setColor(Color c){ //for demo purposes
+	public void setColor(Color c){
 		color = c;
 	}
 	public Color getColor(){
 		return color;
+	}
+	public void setScroll(int dx,int dy){
+		xscroll=dx;
+		yscroll=dy;
 	}
 }
