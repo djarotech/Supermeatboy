@@ -1,19 +1,16 @@
+package character;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import platform.Platform;
+import level.MeatBoyLevel;
+import input.MeatBoyInput;
 
 
 public class MeatBoy {
@@ -62,7 +59,7 @@ public class MeatBoy {
 		alive=true;
 		inAir=true;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
-		meatboy =Toolkit.getDefaultToolkit().createImage("src/meatboy.jpg");
+		meatboy =Toolkit.getDefaultToolkit().createImage("resources/meatboy.jpg");
 		input= new MeatBoyInput(c);
 	}
 	public void move(){
@@ -141,21 +138,12 @@ public class MeatBoy {
 		yPos+=yVel;
 		cannotRight = false;
 		cannotLeft = false;
-		checkCollisions();
-		
-		xscroll=xPos-500;//width of frame - centers meatboy.. need to add a variable name later
-		yscroll=yPos-500;//height of frame - centers meatboy..
-		if(yscroll<0)	// all of this is still being thought out...
-			yscroll=0;	//this should not belong to the meatboy class, but to the level class. Need to rethink how i am doing this.
-		if(xscroll<0)
-			xscroll=0;
-		if(xscroll>1000-MEATBOY_WIDTH)
-			xscroll=1000;
-		if(yscroll>1000-MEATBOY_HEIGHT)
-			yscroll=1000;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_HEIGHT, MEATBOY_WIDTH);
-		System.out.println("x="+xPos);
-		System.out.println("y="+yPos);
+		checkCollisions();
+		xscroll=xPos;
+		yscroll=yPos;
+		hitbox = new Rectangle(xPos,yPos,MEATBOY_HEIGHT, MEATBOY_WIDTH);
+		
 	}
 
 	public void draw(Graphics g) {
@@ -170,7 +158,7 @@ public class MeatBoy {
 		platforms=level.getPlatforms();
 		for(int i=0;i<platforms.size();i++){
 			Platform temp = platforms.get(i);
-			if(hitbox.intersects(temp.getHitbox())){ 
+			if(hitbox.intersects(temp.getHitbox())){
 				if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom())
 				{
 					xPos = temp.getLeft()-MEATBOY_WIDTH;
@@ -196,8 +184,7 @@ public class MeatBoy {
 					yPos = temp.getBottom();
 					yVel = 0;
 				}		
-				
-			}
+			}	
 			else{
 				if(!inAir && (xPos<standingLeft || xPos>standingRight))
 				{
@@ -225,5 +212,11 @@ public class MeatBoy {
 	}
 	public int getYScroll(){
 		return yscroll;
+	}
+	public void setXScroll(int x ){
+		xscroll=x;
+	}
+	public void setYScroll(int y){
+		yscroll=y;
 	}
 }

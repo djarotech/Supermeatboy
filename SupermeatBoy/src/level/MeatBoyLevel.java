@@ -1,3 +1,4 @@
+package level;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -6,7 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import character.MeatBoy;
+import platform.Platform;
 import javax.swing.*;
 
 
@@ -29,7 +31,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		width=2000;
 		height=2000;
 		this.setOpaque(true);
-		this.setBackground(Color.LIGHT_GRAY);
+		this.setBackground(Color.white);
 		for(int i=0;i<4;i++){
 			Platform test = new Platform(130,350-i*50,50,50);
 			test.setColor(Color.GREEN);
@@ -72,8 +74,19 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	}
 	public void update(){
 		player.move();
-		xscroll=player.getXScroll();
-		yscroll=player.getYScroll();
+		xscroll=player.getXScroll()-frame_width/2;
+		yscroll=player.getYScroll()-frame_height/2;
+		if(xscroll<0)
+			xscroll=0;
+		if(yscroll<0)
+			yscroll=0;
+		if(xscroll>width-frame_width)
+			xscroll=width-frame_width;
+		if(yscroll>height-frame_height)
+			yscroll=height-frame_height;
+		player.setXScroll(xscroll);
+		player.setYScroll(yscroll);
+	
 		for(int i=0;i<platformList.size();i++){
 			platformList.get(i).setScroll(xscroll,yscroll);
 		}
