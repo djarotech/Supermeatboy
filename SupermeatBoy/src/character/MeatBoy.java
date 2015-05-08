@@ -37,6 +37,8 @@ public class MeatBoy {
 	//touching wall restrictions
 	private boolean cannotLeft;
 	private boolean cannotRight;
+	private boolean holdingLeft;
+	private boolean holdingRight;
 	
 	
 	private Graphics offgc;
@@ -46,6 +48,8 @@ public class MeatBoy {
 	public MeatBoy(Component c,MeatBoyLevel lev) {
 		cannotLeft = false;
 		cannotRight = false;
+		holdingLeft = false;
+		holdingRight = false;
 		yscroll=0;
 		xscroll=0;
 		gravity =1.1;
@@ -94,6 +98,7 @@ public class MeatBoy {
 					yVel=-20;
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				xVel=10;
+				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
@@ -102,8 +107,11 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				xVel=-10;
+				holdingLeft = true;
 				if(cannotLeft)
+				{
 					xVel = 0;
+				}
 				if(input.isKeyPressed(KeyEvent.VK_F)){
 					xVel*=1.75;
 				}
@@ -115,6 +123,7 @@ public class MeatBoy {
 			
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				xVel=10;
+				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
@@ -123,8 +132,12 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				xVel=-10;
+				holdingLeft = true;
 				if(cannotLeft)
+				{
 					xVel = 0;
+				}
+				
 				if(input.isKeyPressed(KeyEvent.VK_F)){
 					xVel*=1.75;
 				}
@@ -140,6 +153,8 @@ public class MeatBoy {
 		cannotLeft = false;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_HEIGHT, MEATBOY_WIDTH);
 		checkCollisions();
+		holdingLeft = false;
+		holdingRight = false;
 		xscroll=xPos;
 		yscroll=yPos;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_HEIGHT, MEATBOY_WIDTH);
@@ -159,38 +174,43 @@ public class MeatBoy {
 		for(int i=0;i<platforms.size();i++){
 			Platform temp = platforms.get(i);
 			if(hitbox.intersects(temp.getHitbox())){
-				if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom())
+				//left wall
+				if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingRight)
 				{
 					xPos = temp.getLeft()-MEATBOY_WIDTH;
 					cannotRight = true;
+				//	System.out.println("left");
 					
 				}
-				else if (Math.abs(xPos-temp.getRight())<=xVel && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom())
+				//right wall
+				else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingLeft)
 				{
 					xPos = temp.getRight();
 					cannotLeft = true;
+				//	System.out.println("right");
 					
 				}
-				else if (xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()>=yVel)
-				{						
-					yPos = temp.getTop()-MEATBOY_HEIGHT;
+				//top wall
+				else if (yVel>=0)//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
+				{	
 					yVel = 0;
 					standingLeft = temp.getLeft();
 					standingRight = temp.getRight();
+					yPos = temp.getTop()-MEATBOY_HEIGHT;
 					inAir=false;	
+					System.out.println(inAir + "");
 				}
-				else if (xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
+				//bottom wall
+				else //(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
 				{
 					yPos = temp.getBottom();
 					yVel = 0;
 				}		
 			}	
 			else{
-				if(!inAir && (xPos<standingLeft || xPos>standingRight))
+				if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
 				{
-					System.out.println("Ran off platform");
 					inAir = true;
-					
 				}
 			}
 		}
