@@ -2,13 +2,13 @@
 **walljumping
 
 ****Fix collision
-
-****implement tiled and tilemaps.
 	
-**different types of platforms(subclasses).
+**We need many different types of platforms(subclasses). We are limited to rectangle hitboxes. 
 	Type:
+	
+	-note that we CAN use a sawblade with a circle hitbox because if there is any collision, meatboy automatically dies. We just cannot have rounded/slanted platforms yet.
 
-	-the platforms pairs that switch, one becoming invisible, the other becoming visible
+	-the platforms pairs that alternate, one becoming invisible, the other becoming visible
 
 	-platforms that disappear after they are touched
 
@@ -19,7 +19,11 @@
 	-??? Add any ideas in this readme.
 -AI
 
--make a running animation for meatboy. So when he has only an x velocity, switch to the running .png file. If he has an x and a y velocity, give him a jumping .png file. Otherwise, use regular.
+-monster sprites , meatgirl sprite, any other sprites
+
+-Gui front end
+
+-loading screen
 
 
 
