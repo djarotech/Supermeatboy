@@ -30,6 +30,8 @@ public class MeatBoy {
 	private int yPos;
 	private double xVel;
 	private double yVel;
+	private final double X_ACCELERATION;
+	private final int MAX_SPEED;
 	private int xscroll; 
 	private int yscroll; 
 	private int standingLeft;
@@ -53,6 +55,8 @@ public class MeatBoy {
 		yscroll=0;
 		xscroll=0;
 		gravity =1.1;
+		X_ACCELERATION = 2;
+		MAX_SPEED = 10;
 		offscreen = new BufferedImage(MEATBOY_HEIGHT,MEATBOY_WIDTH,BufferedImage.TYPE_INT_RGB);
 		offgc = offscreen.getGraphics();
 		level=lev;
@@ -67,6 +71,7 @@ public class MeatBoy {
 		input= new MeatBoyInput(c);
 	}
 	public void move(){
+		System.out.println(xVel + "");
 		if(input.isKeyPressed(KeyEvent.VK_R)){
 			xPos = 100;
 			yPos = 100;
@@ -97,16 +102,19 @@ public class MeatBoy {
 			if(input.isKeyPressed(KeyEvent.VK_UP)&&input.isKeyPressed(KeyEvent.VK_F))
 					yVel=-20;
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
-				xVel=10;
+				if(xVel<MAX_SPEED)
+				xVel+=X_ACCELERATION;
 				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
+					if(xVel<=MAX_SPEED + MAX_SPEED/2)
 					xVel*=1.75;
 				}
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
-				xVel=-10;
+				if(xVel>-MAX_SPEED)
+				xVel-=X_ACCELERATION;
 				holdingLeft = true;
 				if(cannotLeft)
 				{
@@ -122,7 +130,7 @@ public class MeatBoy {
 		else{
 			
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
-				xVel=10;
+					xVel = MAX_SPEED;
 				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
@@ -131,6 +139,7 @@ public class MeatBoy {
 				}
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
+				xVel = -MAX_SPEED;
 				xVel=-10;
 				holdingLeft = true;
 				if(cannotLeft)
