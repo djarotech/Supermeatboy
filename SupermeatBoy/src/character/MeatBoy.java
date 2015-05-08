@@ -208,6 +208,7 @@ public class MeatBoy {
 				}		
 			}	
 			else{
+				if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
 				{
 					inAir = true;
 				}
