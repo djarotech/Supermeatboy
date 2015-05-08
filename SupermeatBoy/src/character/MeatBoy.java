@@ -140,7 +140,6 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				xVel = -MAX_SPEED;
-				xVel=-10;
 				holdingLeft = true;
 				if(cannotLeft)
 				{
