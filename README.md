@@ -1,21 +1,29 @@
-# Supermeatboy
--- To use git, you have to download git. http://git-scm.com/downloads
--- Firs thing you have to do, is create an account
+#To do: number of(*) means priority level
+**walljumping
 
---My account has the master branch which will be changed, and you guys will "fork" my repository. What this does, is it creates a repository on your github account, that is a clone of the master repository. Any changes made to the master branch will also be made to your repository, where you will be able to your push/pull changes.
+****Fix collision
+	
+**We need many different types of platforms(subclasses). We are limited to rectangle hitboxes. 
+	Type:
+	
+	-note that we CAN use a sawblade with a circle hitbox because if there is any collision, meatboy automatically dies. We just cannot have rounded/slanted platforms yet.
 
---Scroll up and "Fork" my repository.
+	-the platforms pairs that alternate, one becoming invisible, the other becoming visible
 
---The pull command is what you should use before you start coding. Pull updates all of your code, with any changes made to the online-master repository. Since you are "forking" my repository, you cannot directly change the master branch, so you have to submit a "pull request", essentially asking me for permission to allow the changes you made to your own repository. I click allow, and all of your changes are saved onto the master branch. 
+	-platforms that disappear after they are touched
 
---"commit" finds all changes made, and then prompts you to tell you what you changed/updated. You can see a list of the commit history on the master branch.
+	-moving platforms
 
---"push" pushes any changes from your local repository onto your online repository, it is important to note that this is NOT my online repository. When you have made changes and want to update the master branch (MY online repository), this is the order: 
+	-spikes
 
--- 1. type "git commit"(Command propt) - finished making changes
+	-??? Add any ideas in this readme.
+-AI
 
--- 2. type "git push"(Command prompt) - Apply these changes from your local repostiory, to the online repository
+-monster sprites , meatgirl sprite, any other sprites
 
--- 3. Submit a pull request(Website)- Apply changes from your online-repository, to the master(my) repository. This updates my repository, and thus, it updates everyone else's repository because they are forking my repository.
+-Gui front end
+
+-loading screen
+
 
 
