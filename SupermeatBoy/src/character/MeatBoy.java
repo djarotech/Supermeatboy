@@ -36,6 +36,7 @@ public class MeatBoy {
 	private double yVel;
 	private final double X_ACCELERATION;
 	private final int MAX_SPEED;
+	private final int MAX_FALLING_SPEED;
 	private int xscroll; 
 	private int yscroll; 
 	private int standingLeft;
@@ -57,8 +58,9 @@ public class MeatBoy {
 		yscroll=0;
 		xscroll=0;
 		gravity =1.1;
-		X_ACCELERATION = 2;
+		X_ACCELERATION = 5;
 		MAX_SPEED = 10;
+		MAX_FALLING_SPEED = 30;
 		offscreen = new BufferedImage(MEATBOY_WIDTH,MEATBOY_HEIGHT,BufferedImage.TYPE_INT_RGB);
 		level=lev;
 		platforms = level.getPlatforms();
@@ -114,7 +116,7 @@ public class MeatBoy {
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
-					if(xVel<=MAX_SPEED + MAX_SPEED/2)
+					if(xVel<=MAX_SPEED + MAX_SPEED/2 && xVel>=0)
 					xVel*=1.5;
 
 				}
@@ -129,6 +131,7 @@ public class MeatBoy {
 					xVel = 0;
 				}
 				if(input.isKeyPressed(KeyEvent.VK_F)){
+					if(xVel>=-MAX_SPEED - MAX_SPEED/2 && xVel<=0)
 					xVel*=1.5;
 				}
 			}
@@ -163,6 +166,7 @@ public class MeatBoy {
 			else
 				xVel=0;
 			
+			if (yVel<=MAX_FALLING_SPEED)
 			yVel+=gravity;
 		}
 		xPos+=xVel;
