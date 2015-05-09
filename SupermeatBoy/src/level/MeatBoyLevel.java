@@ -5,67 +5,60 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import character.MeatBoy;
+
 import platform.Platform;
+import tile.TileSet;
+import tile.Tile;
+
 import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import character.MeatBoy;
 
 
 public class MeatBoyLevel extends JPanel implements ActionListener{
 	private Timer time;
 	private MeatBoy player;
-	private int width= 2000;
-	private int height= 2000;
+	private int width;
+	private int height;
 	private int frame_width;
 	private int frame_height;
 	private ArrayList<Platform> platformList;
 	private int xscroll;
 	private int yscroll;
+	private BufferedImage entirebackground;
+	private BufferedImage subbackground;
+	private TileMap tmap;
+
 	public MeatBoyLevel(Component c)   {
-		platformList = new ArrayList<Platform>();
 		xscroll=0;
 		yscroll=0;
 		frame_height=c.getHeight();
 		frame_width=c.getWidth();
-		width=2000;
-		height=2000;
+		//LOOP THROUGH THe LEVELS... LOAD ONE, PLAY IT FULLY THROUGH THEN LOOP THE NEXT.
+		String src = "resources/map1.tmx";
+		tmap = new TileMap(new File(src));
+		entirebackground = tmap.drawMap();
+		subbackground=null;
+		width=tmap.getNumCols()*tmap.TILE_SIZE;
+		height=tmap.getNumRows()*tmap.TILE_SIZE;
+		platformList=tmap.getPlatforms();
+
 		this.setOpaque(true);
 		this.setBackground(Color.white);
-		for(int i=0;i<4;i++){
-			Platform test = new Platform(130,350-i*50,50,50);
-			test.setColor(Color.GREEN);
-			platformList.add(test);
-		}
-		int gap=50;
-		for (int i2 = 0; i2<10; i2++){
-			Platform plat= new Platform(350+i2*30+gap*i2,i2*25+280,50,50);
-			plat.setColor(new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
-			platformList.add(plat);
-		}
 		
-		for(int i=0;i<4;i++){
-			Platform test = new Platform(1100+200*i,330-i*100,600,20+100*i);
-			test.setColor(Color.GREEN);
-			platformList.add(test);
-		}
-		for(int i=0;i<2;i++){
-			Platform test = new Platform(1150+200*i,500,20,470);
-			test.setColor(Color.BLUE);
-			platformList.add(test);
-		}
-		
-		Platform test = new Platform(130,450,50,50);
-		test.setColor(Color.red);
-		platformList.add(test);
-		
-		Platform ground = new Platform(50,500,1100,50);
-		ground.setColor(Color.red);
-		Platform ground2 = new Platform(500,1000,1100,250);
-		ground2.setColor(Color.RED);
-		
-		platformList.add(ground);
-		platformList.add(ground2);
 		player = new MeatBoy(c,this);	
 		
 		time=new Timer(40,this);
@@ -86,7 +79,6 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 			yscroll=height-frame_height;
 		player.setXScroll(xscroll);
 		player.setYScroll(yscroll);
-	
 		for(int i=0;i<platformList.size();i++){
 			platformList.get(i).setScroll(xscroll,yscroll);
 		}
@@ -94,10 +86,9 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		subbackground = entirebackground.getSubimage(xscroll,0, frame_width, frame_height)	;
+		g.drawImage(subbackground, 0, 0,null);
 		player.draw(g);	
-		for(Platform p:platformList){
-			p.draw(g);
-		}
 	}
 	public ArrayList<Platform> getPlatforms(){
 		return platformList;

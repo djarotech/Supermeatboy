@@ -1,9 +1,9 @@
 #To do: number of(*) means priority level
-**walljumping
+****walljumping
 
-****Fix collision
+*Fix small collision problems
 	
-**We need many different types of platforms(subclasses). We are limited to rectangle hitboxes. 
+***We need many different types of platforms(subclasses). We are limited to rectangle hitboxes. 
 	Type:
 	
 	-note that we CAN use a sawblade with a circle hitbox because if there is any collision, meatboy automatically dies. We just cannot have rounded/slanted platforms yet.
