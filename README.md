@@ -3,10 +3,7 @@
 
 *Fix small collision problems
 	
-***We need many different types of platforms(subclasses). We are limited to rectangle hitboxes. 
-	Type:
-	
-	-note that we CAN use a sawblade with a circle hitbox because if there is any collision, meatboy automatically dies. We just cannot have rounded/slanted platforms yet.
+*** different platforms 
 
 	-the platforms pairs that alternate, one becoming invisible, the other becoming visible
 
@@ -16,14 +13,13 @@
 
 	-spikes
 
-	-??? Add any ideas in this readme.
--AI
+	-??? Add other ideas, put into this readme
 
--monster sprites , meatgirl sprite, any other sprites
+-monsters , meatgirl , any other types of characters.
 
--Gui front end
+-*Gui front end
 
--loading screen
+-*loading screen
 
 
 
