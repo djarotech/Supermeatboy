@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import platform.Platform;
-import platform.TileMap;
+import tile.TileMap;
 import tile.TileSet;
 import tile.Tile;
 

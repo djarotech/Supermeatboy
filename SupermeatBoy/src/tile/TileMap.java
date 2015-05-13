@@ -1,4 +1,4 @@
-package platform;
+package tile;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -17,8 +17,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import tile.Tile;
-import tile.TileSet;
+import platform.Platform;
 
 public class TileMap {
 	public static final int TILE_SIZE= 20;
