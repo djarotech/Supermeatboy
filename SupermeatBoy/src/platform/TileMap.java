@@ -1,4 +1,4 @@
-package level;
+package platform;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -17,7 +17,6 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import platform.Platform;
 import tile.Tile;
 import tile.TileSet;
 
@@ -27,7 +26,7 @@ public class TileMap {
 	private ArrayList<Tile> alltiles;
 	private Tile[][] background;
 	private Tile[][] stationary;
-	private Tile[][] foreground;
+	private Tile[][] moving;
 	private File tmxfile;
 	private ArrayList<Platform> plats;
 	private int numRows;
@@ -56,7 +55,7 @@ public class TileMap {
 		System.out.println(numCols);
 		background = new Tile[numRows][numCols];
 		stationary = new Tile[numRows][numCols];
-		foreground = new Tile[numRows][numCols];
+		moving = new Tile[numRows][numCols];
 		try {
 			loadMap();
 		} catch (XPathExpressionException | SAXException
@@ -79,9 +78,9 @@ public class TileMap {
 		}
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
-				if(foreground[r][c]!=null)
-				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-			}
+				if(moving[r][c]!=null)
+				g.drawImage(moving[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+			}	
 		}
 		g.dispose();
 		return bfImage;
@@ -99,7 +98,9 @@ public class TileMap {
 					for(c=0;c<background[r].length;c++){
 						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
+							System.out.println(System.currentTimeMillis());
 							background[r][c]=alltiles.get(whichTile-1);	
+							System.out.println(System.currentTimeMillis());
 						}
 						gidNumber++;
 					}
@@ -119,13 +120,13 @@ public class TileMap {
 				}
 				
 			break;
-			case "foreground":
+			case "moving":
 				gidNumber=1;
-				for(r=0;r<foreground.length;r++){
-					for(c=0;c<foreground[r].length;c++){
+				for(r=0;r<moving.length;r++){
+					for(c=0;c<moving [r].length;c++){
 						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
-							foreground[r][c]=alltiles.get(whichTile-1);	
+							moving[r][c]=alltiles.get(whichTile-1);	
 						}
 						gidNumber++;
 					}

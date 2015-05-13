@@ -66,7 +66,7 @@ public class MeatBoy {
 		platforms = level.getPlatforms();
 		offscreen=null;
 		xPos=100;
-		yPos=100;
+		yPos=400;
 		alive=true;
 		inAir=true;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
@@ -80,7 +80,7 @@ public class MeatBoy {
 		currentState=meatboy;
 		if(input.isKeyPressed(KeyEvent.VK_R)){
 			xPos = 100;
-			yPos = 100;
+			yPos = 400;
 			inAir = true;
 		}
 		if(xPos+xVel<0){

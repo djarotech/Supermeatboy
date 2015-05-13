@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import platform.Platform;
+import platform.TileMap;
 import tile.TileSet;
 import tile.Tile;
 
@@ -43,9 +44,10 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private TileMap tmap;
 
 	public MeatBoyLevel(Component c)   {
+		this.setSize(400,400);
 		xscroll=0;
 		yscroll=0;
-		frame_height=c.getHeight();
+		frame_height=c.getHeight()-40;
 		frame_width=c.getWidth();
 		//LOOP THROUGH THe LEVELS... LOAD ONE, PLAY IT FULLY THROUGH THEN LOOP THE NEXT.
 		String src = "resources/map1.tmx";
@@ -86,7 +88,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		subbackground = entirebackground.getSubimage(xscroll,0, frame_width, frame_height)	;
+		subbackground = entirebackground.getSubimage(xscroll,yscroll, frame_width, frame_height)	;
 		g.drawImage(subbackground, 0, 0,null);
 		player.draw(g);	
 	}
