@@ -41,8 +41,7 @@ public class TileSet {
 		image = ImageIO.read(new File(src));
 		for(int r=0;r<h;r+=20){
 			for(int c=0;c<w;c+=20){	
-				BufferedImage bi=image.getSubimage(c,r, tileWidth, tileHeight)	;
-				Tile tmp = new Tile(r,c,bi);
+				Tile tmp = new Tile(r,c,image.getSubimage(c,r, tileWidth, tileHeight));
 				alltiles.add(tmp);
 			}
 		}
@@ -54,13 +53,14 @@ public class TileSet {
       	XPath path = xpfactory.newXPath();
 		Document doc = builder.parse(tmxfile);
 		int numTileSets = Integer.parseInt(path.evaluate("count(/map/tileset)", doc));
+		
 		for(int i=1;i<=numTileSets;i++){
-			
 			String src=path.evaluate("/map/tileset["+i+"]/image/@source", doc);
 			int imgw=Integer.parseInt(path.evaluate("/map/tileset["+i+"]/image/@width", doc));
 			int imgh=Integer.parseInt(path.evaluate("/map/tileset["+i+"]/image/@height", doc));
 			load(imgw,imgh,"resources/" +src);
 		}
+		
 	}
 	public ArrayList<Tile> getTiles(){
 		return alltiles;

@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
+import javax.print.attribute.standard.Destination;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,6 +17,8 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import character.BandageGirl;
+import character.MeatBoy;
 import platform.Platform;
 
 public class TileMap {
@@ -24,19 +26,25 @@ public class TileMap {
 	private TileSet ts;
 	private ArrayList<Tile> alltiles;
 	private Tile[][] background;
+	private Tile[][] foreground;
 	private Tile[][] stationary;
-	private Tile[][] moving;
+	private Tile[][] monsters;
 	private File tmxfile;
-	private ArrayList<Platform> plats;
+	private ArrayList<Platform> stationaryplats;
 	private int numRows;
 	private int numCols;
-	private DocumentBuilderFactory factory ;
+	private DocumentBuilderFactory factory;
 	private DocumentBuilder builder;
 	private XPathFactory xpfactory;
 	private XPath path;
 	private Document doc;
+	//information about the start and end of the map.
+	private BandageGirl bandagegirl;
+	private int mbxstart;
+	private int mbystart;
 	public TileMap(File tmx){
-		plats=new ArrayList<Platform>();
+		stationaryplats=new ArrayList<Platform>();
+		//movingplats=new ArrayList<Platform>();
 		tmxfile=tmx;
 		
 		try{
@@ -50,15 +58,13 @@ public class TileMap {
 			numRows=Integer.parseInt(path.evaluate("/map/@height",doc));
 			numCols=Integer.parseInt(path.evaluate("/map/@width",doc));
 		}catch(Exception e){e.printStackTrace();}
-		System.out.println(numRows);
-		System.out.println(numCols);
 		background = new Tile[numRows][numCols];
 		stationary = new Tile[numRows][numCols];
-		moving = new Tile[numRows][numCols];
+		foreground = new Tile[numRows][numCols];
+		monsters = new Tile[numRows][numCols];
 		try {
 			loadMap();
-		} catch (XPathExpressionException | SAXException
-				| ParserConfigurationException | IOException e) {e.printStackTrace();}
+		} catch (XPathExpressionException | SAXException| ParserConfigurationException | IOException e) {e.printStackTrace();}
 	}
 	public BufferedImage drawMap(){
 		BufferedImage bfImage=new BufferedImage(numCols*TILE_SIZE,numRows*TILE_SIZE,BufferedImage.TYPE_INT_RGB);
@@ -69,37 +75,50 @@ public class TileMap {
 				g.drawImage(background[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 			}
 		}
+		
+		for(int r=0;r<numRows;r++){
+			for(int c=0;c<numCols;c++){
+				if(foreground[r][c]!=null)
+				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+			}
+		}
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
 				if(stationary[r][c]!=null)
 				g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 			}
 		}
-		for(int r=0;r<numRows;r++){
-			for(int c=0;c<numCols;c++){
-				if(moving[r][c]!=null)
-				g.drawImage(moving[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-			}	
-		}
 		g.dispose();
 		return bfImage;
 	}
 	public void loadMap() throws XPathExpressionException, SAXException, ParserConfigurationException, IOException{
-		
 		int numLayers = Integer.parseInt(path.evaluate("count(/map/layer)", doc));
-		int r,c,gidNumber;
+		int r,c,gidNumber,whichTile;
 		for(int i=1;i<=numLayers;i++){
 			String name = path.evaluate("/map/layer["+i+"]/@name",doc);
 			switch(name){
 			case "background":
 				gidNumber=1;
+				whichTile=0;
 				for(r=0;r<background.length;r++){
 					for(c=0;c<background[r].length;c++){
-						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
-							System.out.println(System.currentTimeMillis());
 							background[r][c]=alltiles.get(whichTile-1);	
-							System.out.println(System.currentTimeMillis());
+						}
+						gidNumber++;
+					}
+				}
+				
+			break;
+			case "foreground":
+				gidNumber=1;
+				whichTile=0;
+				for(r=0;r<foreground.length;r++){
+					for(c=0;c<foreground[r].length;c++){
+						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						if(whichTile>0){
+							foreground[r][c]=alltiles.get(whichTile-1);	
 						}
 						gidNumber++;
 					}
@@ -108,31 +127,38 @@ public class TileMap {
 			break;
 			case "stationary":
 				gidNumber=1;
+				whichTile=0;
 				for(r=0;r<stationary.length;r++){
 					for(c=0;c<stationary[r].length;c++){
-						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
 							stationary[r][c]=alltiles.get(whichTile-1);	
+							if(whichTile==alltiles.size()){
+								bandagegirl=new BandageGirl(c*TILE_SIZE,r*TILE_SIZE,TILE_SIZE);	
+							}
 						}
+						
 						gidNumber++;
 					}
 				}
 				
 			break;
-			case "moving":
+			case "monsters":
 				gidNumber=1;
-				for(r=0;r<moving.length;r++){
-					for(c=0;c<moving [r].length;c++){
-						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						if(whichTile>0){
-							moving[r][c]=alltiles.get(whichTile-1);	
+				whichTile=0;
+				for(r=0;r<monsters.length;r++){
+					for(c=0;c<monsters[r].length;c++){
+						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						//find the init positions of meatboy, meatgirl and any other monsters
+						if(whichTile==alltiles.size()-1){
+							mbxstart=c*TILE_SIZE;
+							mbystart=r*TILE_SIZE;
 						}
 						gidNumber++;
 					}
 				}
-				
 			break;
-			default: System.out.println("You entered an unrecognizable layer. ");
+			default: System.out.println("You entered an unrecognizable layer.");
 			}
 		}
 		int numPlats = Integer.parseInt(path.evaluate("count(/map/objectgroup[1]/object)", doc));
@@ -141,16 +167,26 @@ public class TileMap {
 			int y= Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@y", doc));
 			int w = Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@width", doc));
 			int h= Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@height", doc));
-			plats.add(new Platform(x,y,w,h));
+			stationaryplats.add(new Platform(x,y,w,h));
 		}
 	}
 	public ArrayList<Platform> getPlatforms(){
-		return plats;
+		return stationaryplats;
 	}
 	public int getNumCols(){
 		return numCols;
 	}
 	public int getNumRows(){
 		return numRows;
+	}
+	public int getXStart() {
+		return mbxstart;
+	}
+	public int getYStart() {
+		return mbystart;
+	}
+	public BandageGirl getBandageGirl() {
+		// TODO Auto-generated method stub
+		return bandagegirl;
 	}
 }

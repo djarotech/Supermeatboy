@@ -14,7 +14,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-public class Platform {
+public class Platform implements Matter {
 	private int xCoord;
 	private int yCoord;
 	private int width;

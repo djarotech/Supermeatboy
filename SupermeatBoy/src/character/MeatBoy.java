@@ -21,7 +21,7 @@ public class MeatBoy {
 	private MeatBoyInput input;
 	private ArrayList<Platform> platforms;
 	//MeatBoy properties:
-	private final int MEATBOY_WIDTH =25;
+	private final int MEATBOY_WIDTH =20;
 	private final int MEATBOY_HEIGHT =20;
 	private Rectangle hitbox;
 	private boolean alive;
@@ -32,6 +32,8 @@ public class MeatBoy {
 	private boolean inAir;
 	private int xPos;
 	private int yPos;
+	private int initXPos;
+	private int initYPos;
 	private double xVel;
 	private double yVel;
 	private final double X_ACCELERATION;
@@ -50,13 +52,17 @@ public class MeatBoy {
     private BufferedImage offscreen;
     private double gravity;
     
-	public MeatBoy(Component c,MeatBoyLevel lev) {
+	public MeatBoy(Component c,MeatBoyLevel lev,int x, int y) {
 		cannotLeft = false;
 		cannotRight = false;
 		holdingLeft = false;
 		holdingRight = false;
-		yscroll=0;
-		xscroll=0;
+		initXPos=x;
+		initYPos=y;
+		xPos=x;
+		yPos=y;
+		yscroll=x;
+		xscroll=y;
 		gravity =1.1;
 		X_ACCELERATION = 5;
 		MAX_SPEED = 10;
@@ -65,8 +71,6 @@ public class MeatBoy {
 		level=lev;
 		platforms = level.getPlatforms();
 		offscreen=null;
-		xPos=100;
-		yPos=400;
 		alive=true;
 		inAir=true;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
@@ -79,9 +83,7 @@ public class MeatBoy {
 	public void move(){
 		currentState=meatboy;
 		if(input.isKeyPressed(KeyEvent.VK_R)){
-			xPos = 100;
-			yPos = 400;
-			inAir = true;
+			restart();
 		}
 		if(xPos+xVel<0){
 			xPos=0;
@@ -96,8 +98,7 @@ public class MeatBoy {
 			yVel=0;
 		}
 		if(yPos+yVel>level.getHeight()){
-			yPos=level.getHeight();
-			yVel=0;
+			restart();
 		}
 		if(!inAir){
 			
@@ -106,7 +107,7 @@ public class MeatBoy {
 				inAir=true;
 			}
 			if(input.isKeyPressed(KeyEvent.VK_UP)&&input.isKeyPressed(KeyEvent.VK_F))
-				yVel=-20;
+				yVel=-18;
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
 				holdingRight = true;
@@ -234,7 +235,14 @@ public class MeatBoy {
 			}
 		}
 	}
-
+	public void restart(){
+		xPos = initXPos;
+		yPos = initYPos;
+		inAir = true;
+	}
+	public Rectangle getHitbox(){
+		return hitbox;
+	}
 	public boolean isAlive(){
 		return alive;
 	}
