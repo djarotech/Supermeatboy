@@ -41,11 +41,14 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		yscroll=0;
 		frame_height=c.getHeight()-40;
 		frame_width=c.getWidth();
-		//loading a level.
-		System.out.println("There is 2400 tiles x 5 layers.. It takes 30 seconds to load at the moment.");
+		//loading a level. I think it makes more sense to add a source field on the constructor for the tmx file.
+		//so we will have one level object for each level.
+		System.out.println("this level is 2400 tiles(20x20px) x 5 layers, so it takes ~30 seconds to load at the moment.");
 		System.out.println("There are two more levels in this project atm, forest1.tmx and forest2.tmx");
-		System.out.println("Press F to sprint. F also increased your jump. Use arrow keys to move around.");
-		String src = "resources/factory1.tmx";	//change this to try other levels
+		System.out.println("Press F to sprint and also increase your jump. F is necessary to complete most levels");
+		System.out.println("Use arrow keys to move around.");
+		System.out.println("Your goal is to reach meatgirl. When you reach meatgirl the level ends.");
+		String src = "resources/forest2.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -97,12 +100,14 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		g.drawImage(subbackground, 0, 0,null);
 		player.draw(g);
 		for(int i=0;i<saws.size();i++){
-			g.drawImage(
-				saws.get(i).getAnimation().getImage(),
-				saws.get(i).getX(),
-				saws.get(i).getY(),
-				null
-			);
+			if(saws.get(i).getX()<frame_width){
+				g.drawImage(
+					saws.get(i).getAnimation().getImage(),
+					saws.get(i).getX(),
+					saws.get(i).getY(),
+					null
+				);
+			}
 		}
 	}
 	public ArrayList<Platform> getPlatforms(){

@@ -75,7 +75,7 @@ public class TileMap {
 				g.drawImage(background[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 			}
 		}
-		
+		g.drawString("Save bandagegirl. Press F to jump higher and move faster.", 100,80);
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
 				if(foreground[r][c]!=null)

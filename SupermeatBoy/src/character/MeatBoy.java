@@ -90,20 +90,20 @@ public class MeatBoy {
 		if(input.isKeyPressed(KeyEvent.VK_R)){
 			restart();
 		}
-		if(xPos+xVel<0){
+		if(yPos>level.getHeight()){
+			restart();
+		}
+		if(xPos<0){
 			xPos=0;
 			xVel=0;
 		}
-		if(xPos+xVel>level.getWidth()-MEATBOY_WIDTH){
+		if(xPos>level.getWidth()-MEATBOY_WIDTH){
 			xPos=level.getWidth()-MEATBOY_WIDTH;
 			xVel=0;
 		}
-		if(yPos+yVel<0){
+		if(yPos<0){
 			yPos=0; 
 			yVel=0;
-		}
-		if(yPos+yVel>level.getHeight()){
-			restart();
 		}
 		if(!inAir){
 			
@@ -171,7 +171,7 @@ public class MeatBoy {
 				xVel=0;
 			
 			if (yVel<=MAX_FALLING_SPEED)
-			yVel+=gravity;
+				yVel+=gravity;
 		}
 		xPos+=xVel;
 		yPos+=yVel;
