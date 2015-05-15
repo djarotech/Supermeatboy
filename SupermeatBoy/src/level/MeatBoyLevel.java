@@ -1,7 +1,5 @@
 package level;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,10 +7,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
+import platform.BuzzSaw;
 import platform.Platform;
 import tile.TileMap;
 
 import javax.swing.*;
+
 import character.MeatBoy;
 import character.BandageGirl;
 
@@ -28,6 +28,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private int frame_width;
 	private int frame_height;
 	private ArrayList<Platform> platformList;
+	private ArrayList<BuzzSaw> saws;
 	private int xscroll;
 	private int yscroll;
 	private BufferedImage entirebackground;
@@ -36,12 +37,15 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private boolean finished;
 
 	public MeatBoyLevel(Component c)   {
-		this.setSize(400,400);
 		xscroll=0;
 		yscroll=0;
 		frame_height=c.getHeight()-40;
 		frame_width=c.getWidth();
-		String src = "resources/forest2.tmx";
+		//loading a level.
+		System.out.println("There is 2400 tiles x 5 layers.. It takes 30 seconds to load at the moment.");
+		System.out.println("There are two more levels in this project atm, forest1.tmx and forest2.tmx");
+		System.out.println("Press F to sprint. F also increased your jump. Use arrow keys to move around.");
+		String src = "resources/factory1.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -50,11 +54,14 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		subbackground=null;
 		width=tmap.getNumCols()*tmap.TILE_SIZE;
 		height=tmap.getNumRows()*tmap.TILE_SIZE;
+		
 		platformList=tmap.getPlatforms();
+		saws=tmap.getSaws();
+		
 		player = new MeatBoy(c,this, mbxstart,mbystart);	
 		destination = tmap.getBandageGirl();
+		//start updating this level
 		this.setOpaque(true);
-		this.setBackground(Color.white);
 		time=new Timer(40,this);
 		time.start();
 		
@@ -77,21 +84,33 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 				yscroll=height-frame_height;
 			player.setXScroll(xscroll);
 			player.setYScroll(yscroll);
-			for(int i=0;i<platformList.size();i++){
-				platformList.get(i).setScroll(xscroll,yscroll);
+			for(int i=0;i<saws.size();i++){
+				saws.get(i).getAnimation().update();
+				saws.get(i).setXScroll(xscroll);
+				saws.get(i).setYScroll(yscroll);
 			}
 		}
-		
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		subbackground = entirebackground.getSubimage(xscroll,yscroll, width<frame_width?width:frame_width, height<frame_height?height:frame_height)	;
 		g.drawImage(subbackground, 0, 0,null);
-		player.draw(g);	
+		player.draw(g);
+		for(int i=0;i<saws.size();i++){
+			g.drawImage(
+				saws.get(i).getAnimation().getImage(),
+				saws.get(i).getX(),
+				saws.get(i).getY(),
+				null
+			);
+		}
 	}
 	public ArrayList<Platform> getPlatforms(){
 		return platformList;
 	}
+	public ArrayList<BuzzSaw> getSaws(){
+		return saws;
+	}	
 	public void actionPerformed(ActionEvent e){
 		update();
 		repaint();

@@ -5,8 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.print.attribute.standard.Destination;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,7 +16,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import character.BandageGirl;
-import character.MeatBoy;
+import platform.BuzzSaw;
 import platform.Platform;
 
 public class TileMap {
@@ -31,6 +29,7 @@ public class TileMap {
 	private Tile[][] monsters;
 	private File tmxfile;
 	private ArrayList<Platform> stationaryplats;
+	private ArrayList<BuzzSaw> saws;
 	private int numRows;
 	private int numCols;
 	private DocumentBuilderFactory factory;
@@ -44,6 +43,7 @@ public class TileMap {
 	private int mbystart;
 	public TileMap(File tmx){
 		stationaryplats=new ArrayList<Platform>();
+		saws=new ArrayList<BuzzSaw>();
 		//movingplats=new ArrayList<Platform>();
 		tmxfile=tmx;
 		
@@ -67,7 +67,7 @@ public class TileMap {
 		} catch (XPathExpressionException | SAXException| ParserConfigurationException | IOException e) {e.printStackTrace();}
 	}
 	public BufferedImage drawMap(){
-		BufferedImage bfImage=new BufferedImage(numCols*TILE_SIZE,numRows*TILE_SIZE,BufferedImage.TYPE_INT_RGB);
+		BufferedImage bfImage=new BufferedImage(numCols*TILE_SIZE,numRows*TILE_SIZE,BufferedImage.TYPE_INT_ARGB);
 		Graphics g = bfImage.getGraphics();
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
@@ -149,9 +149,9 @@ public class TileMap {
 				for(r=0;r<monsters.length;r++){
 					for(c=0;c<monsters[r].length;c++){
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						//find the init positions of meatboy, meatgirl and any other monsters
-						if(whichTile==alltiles.size()-1){
-							mbxstart=c*TILE_SIZE;
+						//find the init positions of meatboy, any other monsters
+						if(whichTile==alltiles.size()-1){	//this gets meatboy because you are supposed to load the character.png
+							mbxstart=c*TILE_SIZE;			//tileset last when making levels in Tiled
 							mbystart=r*TILE_SIZE;
 						}
 						gidNumber++;
@@ -161,17 +161,33 @@ public class TileMap {
 			default: System.out.println("You entered an unrecognizable layer.");
 			}
 		}
-		int numPlats = Integer.parseInt(path.evaluate("count(/map/objectgroup[1]/object)", doc));
-		for(int j=1;j<=numPlats;j++){
+		int numplats = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"rectangle\"]/object)", doc));
+		for(int j=1;j<=numplats;j++){
 			int x = Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@x", doc));
 			int y= Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@y", doc));
 			int w = Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@width", doc));
 			int h= Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@height", doc));
 			stationaryplats.add(new Platform(x,y,w,h));
 		}
+		int numsaws = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"saws\"]/object)", doc));
+		for(int j=1;j<=numsaws;j++){
+			int x = Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@x", doc));
+			int y= Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@y", doc));
+			int w = Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@width", doc));
+			int h= Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@height", doc));
+			if(w!=h){
+				System.out.println("You entered a lobsided saw. Failure. ");
+			}
+			else{
+				saws.add(new BuzzSaw(x,y,w));
+			}
+		}
 	}
 	public ArrayList<Platform> getPlatforms(){
 		return stationaryplats;
+	}
+	public ArrayList<BuzzSaw> getSaws(){
+		return saws;
 	}
 	public int getNumCols(){
 		return numCols;

@@ -1,0 +1,51 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.*;
+
+
+public class MeatBoyFrame extends JPanel implements ActionListener{
+	private Timer time;
+	private MeatBoy player;
+	private Platform platform1;
+	public static void main(String[] args) throws IOException{
+		new MeatBoyFrame();
+		
+	}
+	public MeatBoyFrame() {
+		setSize(600,600);
+		player = new MeatBoy(this);	
+		platform1 = new Platform(player, this, 100, 100, 200, 200);
+		setBackground(Color.blue);
+		Thread platform1Detection = new Thread(platform1);
+		platform1Detection.start();
+		setTitle("Super Meat Boy");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
+		time=new Timer(40,this);
+		time.start();
+		setVisible(true);
+		
+	}
+	public void update(){
+		player.move();
+		//platform1.run();		
+	}
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
+		try {
+			player.draw(g);
+			//platform1.draw(g);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	public void actionPerformed(ActionEvent e){
+		update();
+		repaint();
+	}
+	
+}

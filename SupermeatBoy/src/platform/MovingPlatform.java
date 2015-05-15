@@ -2,7 +2,7 @@ package platform;
 
 import java.awt.Rectangle;
 
-public class MovingPlatform implements Matter{
+public class MovingPlatform {
 	private int xCoord;
 	private int yCoord;
 	private int width;

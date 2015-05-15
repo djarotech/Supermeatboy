@@ -1,0 +1,86 @@
+package level;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import tile.Tile;
+import tile.TileSet;
+
+public class TileMap {
+	private TileSet ts;
+	private ArrayList<Tile> alltiles;
+	private Tile[][] background;
+	private Tile[][] stationary;
+	private Tile[][] foreground;
+	private File tmxfile;
+	public TileMap(File tmx){
+		tmxfile=tmx;
+		ts = new TileSet(20,20,tmx);
+		alltiles=ts.getTiles();
+		background = new Tile[100][100];
+		stationary = new Tile[100][100];
+		foreground = new Tile[100][100];
+		try {
+			loadMap();
+		} catch (XPathExpressionException | SAXException
+				| ParserConfigurationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void loadMap() throws XPathExpressionException, SAXException, ParserConfigurationException, IOException{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		XPathFactory xpfactory = XPathFactory.newInstance();
+      	XPath path = xpfactory.newXPath();
+		Document doc = builder.parse(tmxfile);
+		int numLayers = Integer.parseInt(path.evaluate("count(/map/layer)", doc));
+		int r,c,whichTile;
+		for(int i=1;i<=numLayers;i++){
+			String name = path.evaluate("/map/layer["+i+"]/@name",doc);
+			switch(name){
+			case "background":
+				gidNumber=0;
+				for(r=0;r<background.length;r++){
+					for(c=0;c<background[r].length;c++){
+						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/gid["+gidNumber+"]/@gid",doc));
+						if(num)
+						background[r][c]=alltiles.get(numId);
+					}
+				}
+				
+			break;
+			case "staionary":
+				gidNumber=0;
+				for(r=0;r<background.length;r++){
+					for(c=0;c<background[r].length;c++){
+						int numId =Integer.parseInt(path.evaluate("/map/layer["+i+"]/gid["+gidNumber+"]/@gid",doc));
+						background[r][c]=alltiles.get(numId);
+					}
+				}
+			break;
+			case "foreground":
+				gidNumber=0;
+				for(r=0;r<background.length;r++){
+					for(c=0;c<background[r].length;c++){
+						int numId =Integer.parseInt(path.evaluate("/map/layer["+i+"]/gid["+gidNumber+"]/@gid",doc));
+						background[r][c]=alltiles.get(numId);
+					}
+				}
+			break;
+			default: System.out.println("You entered an unrecognizable layer. ");
+			}
+			
+		}
+	}
+}

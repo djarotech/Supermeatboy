@@ -1,5 +1,4 @@
 package character;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -9,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import platform.BuzzSaw;
 import platform.Platform;
 import level.MeatBoyLevel;
 import input.MeatBoyInput;
@@ -20,6 +20,7 @@ public class MeatBoy {
 	private MeatBoyLevel level;
 	private MeatBoyInput input;
 	private ArrayList<Platform> platforms;
+	private ArrayList<BuzzSaw> saws;
 	//MeatBoy properties:
 	private final int MEATBOY_WIDTH =20;
 	private final int MEATBOY_HEIGHT =20;
@@ -70,6 +71,7 @@ public class MeatBoy {
 		offscreen = new BufferedImage(MEATBOY_WIDTH,MEATBOY_HEIGHT,BufferedImage.TYPE_INT_RGB);
 		level=lev;
 		platforms = level.getPlatforms();
+		saws=level.getSaws();
 		offscreen=null;
 		alive=true;
 		inAir=true;
@@ -82,6 +84,9 @@ public class MeatBoy {
 	}
 	public void move(){
 		currentState=meatboy;
+		if(!isAlive()){
+			restart();
+		}
 		if(input.isKeyPressed(KeyEvent.VK_R)){
 			restart();
 		}
@@ -113,13 +118,11 @@ public class MeatBoy {
 				holdingRight = true;
 				if(xVel<MAX_SPEED)
 					xVel+=X_ACCELERATION;
-				
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
 					if(xVel<=MAX_SPEED + MAX_SPEED/2 && xVel>=0)
 					xVel*=1.5;
-
 				}
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
@@ -191,49 +194,62 @@ public class MeatBoy {
 		//offgc.dispose();
 	}
 	public void checkCollisions(){
-		platforms=level.getPlatforms();
-		for(int i=0;i<platforms.size();i++){
-			Platform temp = platforms.get(i);
-			if(hitbox.intersects(temp.getHitbox())){
-				//left wall
-				if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingRight)
-				{
-					xPos = temp.getLeft()-MEATBOY_WIDTH;
-					cannotRight = true;
-				//	System.out.println("left");
-					
-				}
-				//right wall
-				else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingLeft)
-				{
-					xPos = temp.getRight();
-					cannotLeft = true;
-				//	System.out.println("right");
-					
-				}
-				//top wall
-				else if (yVel>=0)//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
-				{	
-					yVel = 0;
-					standingLeft = temp.getLeft();
-					standingRight = temp.getRight();
-					yPos = temp.getTop()-MEATBOY_HEIGHT;
-					inAir=false;	
-				}
-				//bottom wall
-				else //(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
-				{
-					yPos = temp.getBottom();
-					yVel = 0;
-				}		
-			}	
-			else{
-				if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
-				{
-					inAir = true;
+		alive=true;
+		for(int i=0;i<saws.size()&&alive;i++){
+			boolean hitsaw = checkCircleCollision(saws.get(i));
+			if(hitsaw){
+				alive=false;
+			}
+		}
+		if(alive){
+			for(int i=0;i<platforms.size();i++){
+				Platform temp = platforms.get(i);
+				if(hitbox.intersects(temp.getHitbox())){
+					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingRight)
+					{
+						xPos = temp.getLeft()-MEATBOY_WIDTH;
+						cannotRight = true;
+					}
+					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingLeft)
+					{
+						xPos = temp.getRight();
+						cannotLeft = true;
+					}
+					//top wall
+					else if (yVel>=0)//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
+					{	
+						yVel = 0;
+						standingLeft = temp.getLeft();
+						standingRight = temp.getRight();
+						yPos = temp.getTop()-MEATBOY_HEIGHT;
+						inAir=false;	
+					}
+					//bottom wall
+					else //(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
+					{
+						yPos = temp.getBottom();
+						yVel = 0;
+					}		
+				}	
+				else{
+					if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
+					{
+						inAir = true;
+					}
 				}
 			}
 		}
+	}
+	public boolean checkCircleCollision(BuzzSaw s){
+		double closestx = clamp(s.getXMiddle(),hitbox.x, hitbox.x+MEATBOY_WIDTH);
+		double closesty = clamp(s.getYMiddle(),hitbox.y, hitbox.y+MEATBOY_HEIGHT);
+		double dx=s.getXMiddle()-closestx;
+		double dy=s.getYMiddle()-closesty;
+		double distance = (Math.pow(dx,2)+Math.pow(dy, 2));
+		return distance<=(s.getRadius()*s.getRadius());
+	}
+	public double clamp(double value, int min, int max){
+		return Math.max(min, Math.min(max,value));
 	}
 	public void restart(){
 		xPos = initXPos;

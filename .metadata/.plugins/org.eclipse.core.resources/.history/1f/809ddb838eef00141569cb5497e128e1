@@ -1,0 +1,12 @@
+import javax.swing.JFrame;
+
+
+public class MeatBoyFrame {
+	public MeatBoyFrame(){
+	frame = new JFrame();
+	frame.setSize(600,600);
+	frame.setTitle("Super Meat Boy");
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	}
+}

@@ -1,20 +1,6 @@
 package platform;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-
-public class Platform implements Matter {
+public class Platform  {
 	private int xCoord;
 	private int yCoord;
 	private int width;

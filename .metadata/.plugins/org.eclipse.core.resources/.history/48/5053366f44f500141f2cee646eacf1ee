@@ -1,0 +1,124 @@
+package level;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import tile.Tile;
+import tile.TileSet;
+
+public class TileMap {
+	public static final int TILE_SIZE= 20;
+	private TileSet ts;
+	private ArrayList<Tile> alltiles;
+	private Tile[][] background;
+	private Tile[][] stationary;
+	private Tile[][] foreground;
+	private File tmxfile;
+	public TileMap(File tmx){
+		tmxfile=tmx;
+		ts = new TileSet(TILE_SIZE,TILE_SIZE,tmx);
+		alltiles=ts.getTiles();
+		
+		background = new Tile[32][24];
+		stationary = new Tile[32][24];
+		foreground = new Tile[32][24];
+		try {
+			loadMap();
+		} catch (XPathExpressionException | SAXException
+				| ParserConfigurationException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public BufferedImage drawMap(){
+		BufferedImage bfImage=new BufferedImage(32*TILE_SIZE,24*TILE_SIZE,BufferedImage.TYPE_INT_RGB);
+		Graphics g = bfImage.getGraphics();
+		for(int r=0;r<background.length;r++){
+			for(int c=0;c<background[r].length;c++){
+				if(stationary[r][c]!=null)
+				g.drawImage(background[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+			}
+		}
+		for(int r=0;r<stationary.length;r++){
+			for(int c=0;c<stationary[r].length;c++){
+				if(stationary[r][c]!=null)
+				g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+			}
+		}
+		for(int r=0;r<foreground.length;r++){
+			for(int c=0;c<foreground[r].length;c++){
+				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+			}
+		}
+		g.dispose();
+		return bfImage;
+	}
+	public void loadMap() throws XPathExpressionException, SAXException, ParserConfigurationException, IOException{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		XPathFactory xpfactory = XPathFactory.newInstance();
+      	XPath path = xpfactory.newXPath();
+		Document doc = builder.parse(tmxfile);
+		int numLayers = Integer.parseInt(path.evaluate("count(/map/layer)", doc));
+		int r,c,gidNumber;
+		for(int i=1;i<=numLayers;i++){
+			String name = path.evaluate("/map/layer["+i+"]/@name",doc);
+			System.out.println(name);
+			switch(name){
+			case "background":
+				gidNumber=1;
+				for(r=0;r<background.length;r++){
+					for(c=0;c<background[r].length;c++){
+						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						if(whichTile>0){
+							background[r][c]=alltiles.get(whichTile-1);	
+						}
+						gidNumber++;
+					}
+				}
+				
+			break;
+			case "stationary":
+				gidNumber=1;
+				for(r=0;r<stationary.length;r++){
+					for(c=0;c<stationary[r].length;c++){
+						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						if(whichTile>0){
+							stationary[r][c]=alltiles.get(whichTile);	
+						}
+						gidNumber++;
+					}
+				}
+				
+			break;
+			case "foreground":
+				gidNumber=1;
+				for(r=0;r<foreground.length;r++){
+					for(c=0;c<foreground[r].length;c++){
+						int whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						if(whichTile>0){
+							foreground[r][c]=alltiles.get(whichTile);	
+						}
+						gidNumber++;
+					}
+				}
+				
+			break;
+			default: System.out.println("You entered an unrecognizable layer. ");
+			}
+			
+		}
+	}
+}

@@ -2,9 +2,7 @@ package app;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
-
 import level.MeatBoyLevel;
-
 import javax.swing.JFrame;
 
 

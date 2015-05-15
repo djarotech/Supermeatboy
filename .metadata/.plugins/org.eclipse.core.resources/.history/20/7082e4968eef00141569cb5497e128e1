@@ -1,0 +1,12 @@
+import javax.swing.JFrame;
+
+
+public class MeatBoyFrame extends JFrame {
+	public MeatBoyFrame(){
+		new JFrame();
+		setSize(600,600);
+		setTitle("Super Meat Boy");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	}
+}

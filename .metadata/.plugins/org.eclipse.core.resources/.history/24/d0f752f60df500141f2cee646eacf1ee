@@ -1,0 +1,49 @@
+package tile;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+public class TileSet {
+	private int tileHeight;
+	private int tileWidth;
+	private int firstgid;
+	private int lastgid;
+	private int imageWidth;
+	private int imageHeight;
+	private Image image;
+	private BufferedImage offscreen;
+	private ArrayList<Tile> set;
+	public TileSet(int tileHeight, int tileWidth, String source, int imageWidth, int imageHeight,  int firstgid){
+		this.tileHeight = tileHeight;
+		this.tileWidth = tileWidth;
+		image =Toolkit.getDefaultToolkit().createImage(source);
+		this.imageWidth= imageWidth;
+		this.imageHeight =  imageHeight;
+		this.firstgid = firstgid;
+		this.lastgid = lastgid;
+		set= new ArrayList<Tile>();
+	}
+	public void load(){
+		
+		int end = (imageWidth/tileWidth)*(imageHeight/tileHeight);
+		for(int i=0;i<end;i++){
+			int x=firstgid*(i-1)*tileHeight;
+			int y = lastgid*(i-1)*tileWidth;		
+			
+			offscreen = new BufferedImage(tileHeight,tileWidth,BufferedImage.TYPE_INT_RGB);
+			Graphics g=offscreen.getGraphics();
+			g.drawImage(image, 0, 0, tileWidth, tileHeight, x, y, x+tileWidth, y+tileHeight, null);
+			
+			Tile tmp = new Tile(x,y,offscreen);
+			set.add(tmp);
+			
+			g.dispose();
+		}
+	}
+	public ArrayList<Tile> getTiles(){
+		return set;
+	}
+}
