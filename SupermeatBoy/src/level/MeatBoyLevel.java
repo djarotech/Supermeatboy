@@ -6,8 +6,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import platform.BuzzSaw;
+import platform.DisappearPlat;
 import platform.Platform;
 import tile.TileMap;
 
@@ -28,14 +30,16 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private int frame_width;
 	private int frame_height;
 	private ArrayList<Platform> platformList;
-	private ArrayList<BuzzSaw> saws;
+	private ArrayList<BuzzSaw> sawlist;
+	private ArrayList<DisappearPlat> originaldplist;
+	private ArrayList<DisappearPlat> dplist;
 	private int xscroll;
 	private int yscroll;
 	private BufferedImage entirebackground;
 	private BufferedImage subbackground;
 	private TileMap tmap;
 	private boolean finished;
-
+	private DisappearPlat dp;
 	public MeatBoyLevel(Component c)   {
 		xscroll=0;
 		yscroll=0;
@@ -43,12 +47,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		frame_width=c.getWidth();
 		//loading a level. I think it makes more sense to add a source field on the constructor for the tmx file.
 		//so we will have one level object for each level.
-		System.out.println("this level is 2400 tiles(20x20px) x 5 layers, so it takes ~30 seconds to load at the moment.");
-		System.out.println("There are two more levels in this project atm, forest1.tmx and forest2.tmx");
-		System.out.println("Press F to sprint and also increase your jump. F is necessary to complete most levels");
-		System.out.println("Use arrow keys to move around.");
-		System.out.println("Your goal is to reach meatgirl. When you reach meatgirl the level ends.");
-		String src = "resources/forest2.tmx";	//change this to try other levels
+		String src = "resources/forest1.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -57,10 +56,11 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		subbackground=null;
 		width=tmap.getNumCols()*tmap.TILE_SIZE;
 		height=tmap.getNumRows()*tmap.TILE_SIZE;
-		
 		platformList=tmap.getPlatforms();
-		saws=tmap.getSaws();
-		
+		sawlist=tmap.getSaws();
+		originaldplist=tmap.getDPs();
+		System.out.println(originaldplist.size()+"init");
+		dplist=tmap.getDPs();
 		player = new MeatBoy(c,this, mbxstart,mbystart);	
 		destination = tmap.getBandageGirl();
 		//start updating this level
@@ -77,21 +77,29 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 			player.move();
 			xscroll=player.getXScroll()-frame_width/2;
 			yscroll=player.getYScroll()-frame_height/2;
-			if(xscroll<0)
+			if(xscroll<0||width<frame_width)
 				xscroll=0;
-			if(yscroll<0)
-				yscroll=0;
-			if(xscroll>width-frame_width)
+			else if(xscroll>width-frame_width)
 				xscroll=width-frame_width;
-			if(yscroll>height-frame_height)
+			if(yscroll<0||height<frame_height)
+				yscroll=0;
+			else if(yscroll>height-frame_height)
 				yscroll=height-frame_height;
 			player.setXScroll(xscroll);
 			player.setYScroll(yscroll);
-			for(int i=0;i<saws.size();i++){
-				saws.get(i).getAnimation().update();
-				saws.get(i).setXScroll(xscroll);
-				saws.get(i).setYScroll(yscroll);
+			for(int i=0;i<sawlist.size();i++){
+				sawlist.get(i).getAnimation().update();
+				sawlist.get(i).setXScroll(xscroll);
+				sawlist.get(i).setYScroll(yscroll);
 			}
+			for(int i=0;i<dplist.size();i++){
+				dplist.get(i).setXScroll(xscroll);
+				dplist.get(i).setYScroll(yscroll);
+				if(dplist.get(i).isTouched()){
+					dplist.get(i).getAnimation().update();
+				}
+			}
+			
 		}
 	}
 	public void paintComponent(Graphics g){
@@ -99,14 +107,30 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		subbackground = entirebackground.getSubimage(xscroll,yscroll, width<frame_width?width:frame_width, height<frame_height?height:frame_height)	;
 		g.drawImage(subbackground, 0, 0,null);
 		player.draw(g);
-		for(int i=0;i<saws.size();i++){
-			if(saws.get(i).getX()<frame_width){
+		for(int i=0;i<sawlist.size();i++){
+			if(sawlist.get(i).getX()<frame_width){
 				g.drawImage(
-					saws.get(i).getAnimation().getImage(),
-					saws.get(i).getX(),
-					saws.get(i).getY(),
+					sawlist.get(i).getAnimation().getImage(),
+					sawlist.get(i).getX(),
+					sawlist.get(i).getY(),
 					null
 				);
+			}
+		}
+		
+		Iterator<DisappearPlat> iter = dplist.iterator();
+		while(iter.hasNext()){
+			DisappearPlat tmp = iter.next();
+			if(tmp.getX()<frame_width&&!tmp.getAnimation().hasLooped()){
+				g.drawImage(
+						tmp.getAnimation().getImage(),
+						tmp.getX(),
+						tmp.getY(),
+						null
+					);
+			}
+			else if(tmp.getAnimation().hasLooped()){
+				iter.remove();
 			}
 		}
 	}
@@ -114,8 +138,19 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		return platformList;
 	}
 	public ArrayList<BuzzSaw> getSaws(){
-		return saws;
+		return sawlist;
 	}	
+	public ArrayList<DisappearPlat> getDPs(){
+		return dplist;
+	}
+	public ArrayList<DisappearPlat> getOriginalDPs(){
+		System.out.println(originaldplist.size()+"get");
+		return originaldplist;
+	}	
+	public void resetDPs(){
+		System.out.println(originaldplist.size()+"reset");
+		dplist=originaldplist;
+	}
 	public void actionPerformed(ActionEvent e){
 		update();
 		repaint();

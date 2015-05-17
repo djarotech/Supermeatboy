@@ -14,6 +14,7 @@ public class MeatBoyFrame extends JFrame {
 		setIconImage(imgicon);
 		setTitle("Super Meat Boy");
 		setLayout(new BorderLayout());
+		
 		add(level1,BorderLayout.CENTER);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);

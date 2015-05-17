@@ -6,6 +6,7 @@ public class Animation {
 	private int currentFrame;
 	private int delay;
 	private int startTime;
+	private boolean haslooped;
 	public Animation(){
 		currentFrame=-1;
 		delay=-1;
@@ -20,6 +21,7 @@ public class Animation {
 			}
 			if(currentFrame==frames.length){
 				currentFrame=0; //restart animation	
+				haslooped=true;
 			}
 		}
 		else
@@ -30,6 +32,16 @@ public class Animation {
 	}
 	public void setFrames(BufferedImage[] someframes){
 		this.frames=someframes;
+		currentFrame=0;
+	}
+	public int getFrame(){
+		return currentFrame;
+	}
+	public boolean hasLooped(){
+		return haslooped;
+	}
+	public void resetAnimation(){
+		haslooped=false;
 		currentFrame=0;
 	}
 	public BufferedImage getImage(){

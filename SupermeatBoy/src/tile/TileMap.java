@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import character.BandageGirl;
 import platform.BuzzSaw;
+import platform.DisappearPlat;
 import platform.Platform;
 
 public class TileMap {
@@ -30,6 +32,7 @@ public class TileMap {
 	private File tmxfile;
 	private ArrayList<Platform> stationaryplats;
 	private ArrayList<BuzzSaw> saws;
+	private ArrayList<DisappearPlat> dplist;
 	private int numRows;
 	private int numCols;
 	private DocumentBuilderFactory factory;
@@ -41,9 +44,11 @@ public class TileMap {
 	private BandageGirl bandagegirl;
 	private int mbxstart;
 	private int mbystart;
+	
 	public TileMap(File tmx){
 		stationaryplats=new ArrayList<Platform>();
 		saws=new ArrayList<BuzzSaw>();
+		dplist=new ArrayList<DisappearPlat>();
 		//movingplats=new ArrayList<Platform>();
 		tmxfile=tmx;
 		
@@ -75,7 +80,6 @@ public class TileMap {
 				g.drawImage(background[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 			}
 		}
-		g.drawString("Save bandagegirl. Press F to jump higher and move faster.", 100,80);
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
 				if(foreground[r][c]!=null)
@@ -153,6 +157,7 @@ public class TileMap {
 						if(whichTile==alltiles.size()-1){	//this gets meatboy because you are supposed to load the character.png
 							mbxstart=c*TILE_SIZE;			//tileset last when making levels in Tiled
 							mbystart=r*TILE_SIZE;
+							System.out.println("Found meatboy" + mbxstart +" "+ mbystart);
 						}
 						gidNumber++;
 					}
@@ -163,18 +168,18 @@ public class TileMap {
 		}
 		int numplats = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"rectangle\"]/object)", doc));
 		for(int j=1;j<=numplats;j++){
-			int x = Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@x", doc));
-			int y= Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@y", doc));
-			int w = Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@width", doc));
-			int h= Integer.parseInt(path.evaluate("/map/objectgroup[1]/object["+j+"]/@height", doc));
+			int x = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"rectangle\"]/object["+j+"]/@x", doc)));
+			int y= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"rectangle\"]/object["+j+"]/@y", doc)));
+			int w = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"rectangle\"]/object["+j+"]/@width", doc)));
+			int h= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"rectangle\"]/object["+j+"]/@height", doc)));
 			stationaryplats.add(new Platform(x,y,w,h));
 		}
 		int numsaws = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"saws\"]/object)", doc));
 		for(int j=1;j<=numsaws;j++){
-			int x = Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@x", doc));
-			int y= Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@y", doc));
-			int w = Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@width", doc));
-			int h= Integer.parseInt(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@height", doc));
+			int x = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@x", doc)));
+			int y= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@y", doc)));
+			int w = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@width", doc)));
+			int h= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"saws\"]/object["+j+"]/@height", doc)));
 			if(w!=h){
 				System.out.println("You entered a lobsided saw. Failure. ");
 			}
@@ -182,12 +187,34 @@ public class TileMap {
 				saws.add(new BuzzSaw(x,y,w));
 			}
 		}
+		int numdp = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"disappear\"]/object)", doc));
+		for(int j=1;j<=numdp;j++){
+			int x = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@x", doc)));
+			int y= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@y", doc)));
+			int w = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@width", doc)));
+			int h= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@height", doc)));
+			if(w==40&&h==40){
+				dplist.add(new DisappearPlat(x,y));
+			}
+			else{
+				System.out.println("Invalid platform dimensions. Disappearing plats must be 40x40 or y");
+			}
+		}
+	}
+	private String trim(String s){
+		if(s.contains(".")){
+			s=s.substring(0,s.indexOf("."));
+		}
+		return s;
 	}
 	public ArrayList<Platform> getPlatforms(){
 		return stationaryplats;
 	}
 	public ArrayList<BuzzSaw> getSaws(){
 		return saws;
+	}
+	public ArrayList<DisappearPlat> getDPs(){
+		return dplist;
 	}
 	public int getNumCols(){
 		return numCols;

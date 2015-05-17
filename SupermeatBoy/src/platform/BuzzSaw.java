@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import animation.Animation;
 
 public class BuzzSaw {
-	BufferedImage bigimage;
+	private BufferedImage bigimage;
 	private Animation rotateAnimation;
 	private int x;
 	private int y;

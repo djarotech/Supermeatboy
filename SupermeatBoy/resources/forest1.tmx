@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="48" height="24" tilewidth="20" tileheight="20" nextobjectid="82">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="48" height="24" tilewidth="20" tileheight="20" nextobjectid="83">
  <tileset firstgid="1" name="foresttiles01" tilewidth="20" tileheight="20">
   <image source="foresttiles01.png" width="600" height="600"/>
  </tileset>
@@ -4671,5 +4671,8 @@
   <object id="81" x="481" y="248" width="126" height="126">
    <ellipse/>
   </object>
+ </objectgroup>
+ <objectgroup name="disappear">
+  <object id="82" x="172" y="240" width="40" height="40"/>
  </objectgroup>
 </map>

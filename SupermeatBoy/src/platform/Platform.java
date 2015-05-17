@@ -8,7 +8,15 @@ public class Platform  {
 	private Rectangle platformHitbox;
 	private int xscroll;
 	private int yscroll;
-
+	public Platform(){
+		xCoord=0;
+		yCoord=0;
+		width=0;
+		height=0;
+		xscroll=0;
+		yscroll=0;
+		platformHitbox=null;
+	}
 	public Platform(int x, int y, int w, int h){
 		xscroll=0;
 		yscroll=0;
