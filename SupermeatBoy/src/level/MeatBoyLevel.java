@@ -47,7 +47,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		frame_width=c.getWidth();
 		//loading a level. I think it makes more sense to add a source field on the constructor for the tmx file.
 		//so we will have one level object for each level.
-		String src = "resources/forest1.tmx";	//change this to try other levels
+		String src = "resources/forest4.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -58,9 +58,8 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		height=tmap.getNumRows()*tmap.TILE_SIZE;
 		platformList=tmap.getPlatforms();
 		sawlist=tmap.getSaws();
-		originaldplist=tmap.getDPs();
-		System.out.println(originaldplist.size()+"init");
-		dplist=tmap.getDPs();
+		originaldplist=new ArrayList<DisappearPlat>(tmap.getDPs());
+		dplist=new ArrayList<DisappearPlat>(tmap.getDPs());
 		player = new MeatBoy(c,this, mbxstart,mbystart);	
 		destination = tmap.getBandageGirl();
 		//start updating this level
@@ -144,12 +143,14 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		return dplist;
 	}
 	public ArrayList<DisappearPlat> getOriginalDPs(){
-		System.out.println(originaldplist.size()+"get");
-		return originaldplist;
+		return new ArrayList<>(originaldplist);
 	}	
 	public void resetDPs(){
-		System.out.println(originaldplist.size()+"reset");
-		dplist=originaldplist;
+		for(DisappearPlat d:originaldplist){
+			d.getAnimation().resetAnimation();
+			d.resetTouched();
+		}
+		dplist=new ArrayList<DisappearPlat>(originaldplist);
 	}
 	public void actionPerformed(ActionEvent e){
 		update();

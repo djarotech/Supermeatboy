@@ -9,8 +9,8 @@
  <tileset firstgid="1537" name="foresttiles01" tilewidth="20" tileheight="20">
   <image source="foresttiles01.png" width="600" height="600"/>
  </tileset>
- <tileset firstgid="2437" name="character" tilewidth="20" tileheight="20">
-  <image source="character.png" width="40" height="20"/>
+ <tileset firstgid="2437" name="myimages" tilewidth="20" tileheight="20">
+  <image source="myimages.png" width="60" height="20"/>
  </tileset>
  <layer name="background" width="24" height="24">
   <data>
@@ -1778,9 +1778,9 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="1993"/>
-   <tile gid="1994"/>
-   <tile gid="1995"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>

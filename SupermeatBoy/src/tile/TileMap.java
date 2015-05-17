@@ -28,6 +28,7 @@ public class TileMap {
 	private Tile[][] background;
 	private Tile[][] foreground;
 	private Tile[][] stationary;
+	private Tile[][] moving;
 	private Tile[][] monsters;
 	private File tmxfile;
 	private ArrayList<Platform> stationaryplats;
@@ -66,6 +67,7 @@ public class TileMap {
 		background = new Tile[numRows][numCols];
 		stationary = new Tile[numRows][numCols];
 		foreground = new Tile[numRows][numCols];
+		moving = new Tile[numRows][numCols];
 		monsters = new Tile[numRows][numCols];
 		try {
 			loadMap();
@@ -137,7 +139,8 @@ public class TileMap {
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
 							stationary[r][c]=alltiles.get(whichTile-1);	
-							if(whichTile==alltiles.size()){
+							if(whichTile==alltiles.size()-1){
+								System.out.println("sup");
 								bandagegirl=new BandageGirl(c*TILE_SIZE,r*TILE_SIZE,TILE_SIZE);	
 							}
 						}
@@ -145,7 +148,21 @@ public class TileMap {
 						gidNumber++;
 					}
 				}
-				
+			break;
+			case "moving":
+				gidNumber=1;
+				whichTile=0;
+				for(r=0;r<moving.length;r++){
+					for(c=0;c<moving[r].length;c++){
+						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
+						if(whichTile==alltiles.size()){
+							DisappearPlat p = new DisappearPlat(c*TILE_SIZE,r*TILE_SIZE);
+							dplist.add(p);
+						}
+						
+						gidNumber++;
+					}
+				}
 			break;
 			case "monsters":
 				gidNumber=1;
@@ -154,7 +171,7 @@ public class TileMap {
 					for(c=0;c<monsters[r].length;c++){
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						//find the init positions of meatboy, any other monsters
-						if(whichTile==alltiles.size()-1){	//this gets meatboy because you are supposed to load the character.png
+						if(whichTile==alltiles.size()-2){	//this gets meatboy because you are supposed to load the character.png
 							mbxstart=c*TILE_SIZE;			//tileset last when making levels in Tiled
 							mbystart=r*TILE_SIZE;
 							System.out.println("Found meatboy" + mbxstart +" "+ mbystart);
@@ -185,19 +202,6 @@ public class TileMap {
 			}
 			else{
 				saws.add(new BuzzSaw(x,y,w));
-			}
-		}
-		int numdp = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"disappear\"]/object)", doc));
-		for(int j=1;j<=numdp;j++){
-			int x = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@x", doc)));
-			int y= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@y", doc)));
-			int w = Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@width", doc)));
-			int h= Integer.parseInt(trim(path.evaluate("/map/objectgroup[@name=\"disappear\"]/object["+j+"]/@height", doc)));
-			if(w==40&&h==40){
-				dplist.add(new DisappearPlat(x,y));
-			}
-			else{
-				System.out.println("Invalid platform dimensions. Disappearing plats must be 40x40 or y");
 			}
 		}
 	}
