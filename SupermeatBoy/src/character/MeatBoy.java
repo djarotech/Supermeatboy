@@ -27,6 +27,8 @@ public class MeatBoy {
 	private final int MEATBOY_WIDTH =20;
 	private final int MEATBOY_HEIGHT =20;
 	private Rectangle hitbox;
+	private Rectangle leftHitBox;
+	private Rectangle rightHitBox;
 	private boolean alive;
 	private Image meatboy;
 	private Image sprintleft;
@@ -39,7 +41,7 @@ public class MeatBoy {
 	private int initYPos;
 	private double xVel;
 	private double yVel;
-	private final double X_ACCELERATION;
+	private double xAcceleration;
 	private final int MAX_SPEED;
 	private final int MAX_FALLING_SPEED;
 	private int xscroll; 
@@ -51,6 +53,8 @@ public class MeatBoy {
 	private boolean cannotRight;
 	private boolean holdingLeft;
 	private boolean holdingRight;
+	private boolean touchingBottom;
+	private boolean spaceHeld;
 	
     private BufferedImage offscreen;
     private double gravity;
@@ -60,16 +64,18 @@ public class MeatBoy {
 		cannotRight = false;
 		holdingLeft = false;
 		holdingRight = false;
+		touchingBottom = false;
+		spaceHeld = false;
 		initXPos=x;
 		initYPos=y;
 		xPos=x;
 		yPos=y;
 		xscroll=x;
 		yscroll=y;
-		gravity =1.1;
-		X_ACCELERATION = 5;
-		MAX_SPEED = 10;
-		MAX_FALLING_SPEED = 30;
+		gravity =1;
+		xAcceleration = 2;
+		MAX_SPEED = 7;
+		MAX_FALLING_SPEED = 20;
 		offscreen = new BufferedImage(MEATBOY_WIDTH,MEATBOY_HEIGHT,BufferedImage.TYPE_INT_RGB);
 		level=lev;
 		platforms = level.getPlatforms();
@@ -97,16 +103,20 @@ public class MeatBoy {
 		if(!inAir){
 			
 			if(input.isKeyPressed(KeyEvent.VK_UP)){
-				yVel=-14;
+				yVel=-10;
 				inAir=true;
+				spaceHeld = true;
 			}
 			if(input.isKeyPressed(KeyEvent.VK_UP)&&input.isKeyPressed(KeyEvent.VK_F))
-				yVel=-18;
+				
+				yVel=-12;
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
 				holdingRight = true;
 				if(xVel<MAX_SPEED)
-					xVel+=X_ACCELERATION;
+					xVel+=xAcceleration;
+				else
+					xVel = MAX_SPEED;
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
@@ -118,7 +128,9 @@ public class MeatBoy {
 				currentState=sprintleft;
 				holdingLeft = true;
 				if(xVel>-MAX_SPEED)
-					xVel-=X_ACCELERATION;
+					xVel-=xAcceleration;
+				else
+					xVel = -MAX_SPEED;
 				if(cannotLeft)
 				{
 					xVel = 0;
@@ -135,17 +147,20 @@ public class MeatBoy {
 			
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
-				xVel = MAX_SPEED;
+				if(xVel<MAX_SPEED)
+					xVel+=xAcceleration;
 				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
 				if(input.isKeyPressed(KeyEvent.VK_F)){
+					if(xVel<=MAX_SPEED + MAX_SPEED/2 && xVel>=0)
 					xVel*=1.5;
 				}
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
-				xVel = -MAX_SPEED;
+				if(xVel>-MAX_SPEED)
+					xVel-=xAcceleration;
 				holdingLeft = true;
 				if(cannotLeft)
 				{
@@ -153,12 +168,33 @@ public class MeatBoy {
 				}
 				
 				if(input.isKeyPressed(KeyEvent.VK_F)){
+				if(xVel>=-MAX_SPEED - MAX_SPEED/2 && xVel<=0)
 					xVel*=1.5;
 				}
 			}
+			else if(xVel>1)
+				xVel-=xAcceleration/2;
+			else if(xVel<-1)
+				xVel+=xAcceleration/2;
 			else
 				xVel=0;
 			
+			if(!input.isKeyPressed(KeyEvent.VK_UP))
+				spaceHeld = false;
+			if(!spaceHeld && input.isKeyPressed(KeyEvent.VK_UP))
+			{
+				if(cannotRight)
+				{
+					xVel = -8;
+					yVel = -10;
+				}
+				else if(cannotLeft)
+				{
+					xVel = 8;
+					yVel = -10;
+				}
+				spaceHeld = true;
+			}
 			if (yVel<=MAX_FALLING_SPEED)
 				yVel+=gravity;
 		}
@@ -179,12 +215,17 @@ public class MeatBoy {
 			yPos=0; 
 			yVel=0;
 		}
+		xPos+=xVel;
+		yPos+=yVel;
 		cannotRight = false;
 		cannotLeft = false;
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT );
+		leftHitBox = new Rectangle(xPos-4,yPos+8,8,MEATBOY_HEIGHT-16);
+		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+8,8,MEATBOY_HEIGHT-16);
 		checkCollisions();
 		holdingLeft = false;
 		holdingRight = false;
+		touchingBottom = false;
 		xscroll=xPos;
 		yscroll=yPos;
 		
@@ -216,34 +257,47 @@ public class MeatBoy {
 					if(temp instanceof DisappearPlat){
 						((DisappearPlat) temp).setTouched();
 					}
-					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingRight)
+					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
 					{
+						System.out.println("Left");
 						xPos = temp.getLeft()-MEATBOY_WIDTH;
 						cannotRight = true;
 					}
-					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && holdingLeft)
+					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
 					{
+						System.out.println("Right");
 						xPos = temp.getRight();
 						cannotLeft = true;
 					}
-					else if (yVel>=0)//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
+					else if (yVel>=0 && yPos+MEATBOY_HEIGHT<temp.getBottom())//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
 					{	
+						System.out.println("top");
 						yVel = 0;
 						standingLeft = temp.getLeft();
 						standingRight = temp.getRight();
 						yPos = temp.getTop()-MEATBOY_HEIGHT;
 						inAir=false;	
 					}
-					else //(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
+					else//(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
 					{
+						touchingBottom = true;
+						System.out.println("bottom");
 						yPos = temp.getBottom();
 						yVel = 0;
-					}	
+					}
 				}	
 				else{
 					if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
 					{
 						inAir = true;
+					}
+				if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
+					{
+						cannotLeft= true;
+					}
+				else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
+					{
+						cannotRight = true;
 					}
 				}
 			}
