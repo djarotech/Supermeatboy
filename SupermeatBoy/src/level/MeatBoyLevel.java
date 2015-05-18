@@ -47,7 +47,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		frame_width=c.getWidth();
 		//loading a level. I think it makes more sense to add a source field on the constructor for the tmx file.
 		//so we will have one level object for each level.
-		String src = "resources/forest4.tmx";	//change this to try other levels
+		String src = "resources/forest2.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
