@@ -171,10 +171,10 @@ public class MeatBoy {
 				else 
 					xVel=-MAX_SPEED;
 			}
-			else if(xVel>1)
-				xVel-=xAcceleration/2;
-			else if(xVel<-1)
-				xVel+=xAcceleration/2;
+			else if(xVel>2)
+				xVel-=xAcceleration;
+			else if(xVel<-2)
+				xVel+=xAcceleration;
 			else
 				xVel=0;
 			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
@@ -247,7 +247,6 @@ public class MeatBoy {
 			boolean hitsaw = checkCircleCollision(saws.get(i));
 			if(hitsaw){
 				alive=false;
-				System.out.println("hit a saw");
 			}
 		}
 		if(alive){
@@ -289,17 +288,14 @@ public class MeatBoy {
 					
 					if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
 					{	
-						System.out.println("first if");
 						inAir = true;
 					}
 				if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
 					{
-					System.out.println("left hbox");
 						cannotLeft= true;
 					}
 				else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
-					{
-					System.out.println("right hbox");
+					{ 
 						cannotRight = true;
 					}
 				}
