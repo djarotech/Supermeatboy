@@ -39,23 +39,20 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private BufferedImage subbackground;
 	private TileMap tmap;
 	private boolean finished;
-	private DisappearPlat dp;
 	public MeatBoyLevel(Component c)   {
 		xscroll=0;
 		yscroll=0;
 		frame_height=c.getHeight()-40;
 		frame_width=c.getWidth();
-		//loading a level. I think it makes more sense to add a source field on the constructor for the tmx file.
-		//so we will have one level object for each level.
-		String src = "resources/forest2.tmx";	//change this to try other levels
+		String src = "resources/factory1.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
 		mbxstart = tmap.getXStart();
 		mbystart = tmap.getYStart();
 		subbackground=null;
-		width=tmap.getNumCols()*tmap.TILE_SIZE;
-		height=tmap.getNumRows()*tmap.TILE_SIZE;
+		width=tmap.getNumCols()*TileMap.TILE_SIZE;
+		height=tmap.getNumRows()*TileMap.TILE_SIZE;
 		platformList=tmap.getPlatforms();
 		sawlist=tmap.getSaws();
 		originaldplist=new ArrayList<DisappearPlat>(tmap.getDPs());

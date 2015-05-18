@@ -48,13 +48,14 @@ public class MeatBoy {
 	private int yscroll; 
 	private int standingLeft;
 	private int standingRight;
+	private long lastwalljump;
+	private long walljumpdelay;
 	//touching wall restrictions
 	private boolean cannotLeft;
 	private boolean cannotRight;
 	private boolean holdingLeft;
 	private boolean holdingRight;
 	private boolean touchingBottom;
-	private boolean spaceHeld;
 	
     private BufferedImage offscreen;
     private double gravity;
@@ -65,17 +66,18 @@ public class MeatBoy {
 		holdingLeft = false;
 		holdingRight = false;
 		touchingBottom = false;
-		spaceHeld = false;
 		initXPos=x;
 		initYPos=y;
 		xPos=x;
 		yPos=y;
 		xscroll=x;
 		yscroll=y;
-		gravity =1;
+		gravity =1.1;
 		xAcceleration = 2;
-		MAX_SPEED = 7;
+		MAX_SPEED = 17;
 		MAX_FALLING_SPEED = 20;
+		lastwalljump=0;
+		walljumpdelay=200;
 		offscreen = new BufferedImage(MEATBOY_WIDTH,MEATBOY_HEIGHT,BufferedImage.TYPE_INT_RGB);
 		level=lev;
 		platforms = level.getPlatforms();
@@ -99,46 +101,41 @@ public class MeatBoy {
 		if(input.isKeyPressed(KeyEvent.VK_R)){
 			restart();
 		}
-		
 		if(!inAir){
-			
 			if(input.isKeyPressed(KeyEvent.VK_UP)){
-				yVel=-10;
+				yVel=-14;
 				inAir=true;
-				spaceHeld = true;
 			}
 			if(input.isKeyPressed(KeyEvent.VK_UP)&&input.isKeyPressed(KeyEvent.VK_F))
-				
-				yVel=-12;
+				yVel=-18;
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
 				holdingRight = true;
-				if(xVel<MAX_SPEED)
-					xVel+=xAcceleration;
-				else
-					xVel = MAX_SPEED;
 				if (cannotRight)
 					xVel=0;
-				if(input.isKeyPressed(KeyEvent.VK_F)){
-					if(xVel<=MAX_SPEED + MAX_SPEED/2 && xVel>=0)
-					xVel*=1.5;
-				}
+				else if(xVel<MAX_SPEED*1.5&&input.isKeyPressed(KeyEvent.VK_F)&&xVel>=0)
+					xVel+=xAcceleration;
+				else if(xVel<MAX_SPEED)
+					xVel +=xAcceleration;
+				else if(input.isKeyPressed(KeyEvent.VK_F))
+					xVel = MAX_SPEED*1.5;
+				else
+					xVel=MAX_SPEED;
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
 				holdingLeft = true;
-				if(xVel>-MAX_SPEED)
-					xVel-=xAcceleration;
-				else
-					xVel = -MAX_SPEED;
 				if(cannotLeft)
-				{
 					xVel = 0;
+				else if(xVel>-MAX_SPEED*1.5 && input.isKeyPressed(KeyEvent.VK_F)&&xVel<=0)
+					xVel-=xAcceleration;
+				else if(xVel>-MAX_SPEED){
+					xVel-=xAcceleration;
 				}
-				if(input.isKeyPressed(KeyEvent.VK_F)){
-					if(xVel>=-MAX_SPEED - MAX_SPEED/2 && xVel<=0)
-					xVel*=1.5;
-				}
+				else if(input.isKeyPressed(KeyEvent.VK_F))
+					xVel = -MAX_SPEED*1.5;
+				else 
+					xVel=-MAX_SPEED;
 			}
 			else
 				xVel=0;	
@@ -147,30 +144,32 @@ public class MeatBoy {
 			
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
-				if(xVel<MAX_SPEED)
-					xVel+=xAcceleration;
-				holdingRight = true;
+				holdingRight=true;
 				if (cannotRight)
 					xVel=0;
-				if(input.isKeyPressed(KeyEvent.VK_F)){
-					if(xVel<=MAX_SPEED + MAX_SPEED/2 && xVel>=0)
-					xVel*=1.5;
-				}
+				else if(xVel<MAX_SPEED*1.5&&input.isKeyPressed(KeyEvent.VK_F)&&xVel>=0)
+					xVel+=xAcceleration;
+				else if(xVel<MAX_SPEED)
+					xVel +=xAcceleration;
+				else if(input.isKeyPressed(KeyEvent.VK_F))
+					xVel = MAX_SPEED*1.5;
+				else
+					xVel=MAX_SPEED;
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
-				if(xVel>-MAX_SPEED)
-					xVel-=xAcceleration;
 				holdingLeft = true;
 				if(cannotLeft)
-				{
 					xVel = 0;
+				else if(xVel>-MAX_SPEED*1.5 && input.isKeyPressed(KeyEvent.VK_F)&&xVel<=0)
+					xVel-=xAcceleration;
+				else if(xVel>-MAX_SPEED){
+					xVel-=xAcceleration;
 				}
-				
-				if(input.isKeyPressed(KeyEvent.VK_F)){
-				if(xVel>=-MAX_SPEED - MAX_SPEED/2 && xVel<=0)
-					xVel*=1.5;
-				}
+				else if(input.isKeyPressed(KeyEvent.VK_F))
+					xVel = -MAX_SPEED*1.5;
+				else 
+					xVel=-MAX_SPEED;
 			}
 			else if(xVel>1)
 				xVel-=xAcceleration/2;
@@ -178,28 +177,42 @@ public class MeatBoy {
 				xVel+=xAcceleration/2;
 			else
 				xVel=0;
-			
-			if(!input.isKeyPressed(KeyEvent.VK_UP))
-				spaceHeld = false;
-			if(!spaceHeld && input.isKeyPressed(KeyEvent.VK_UP))
+			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
 			{
 				if(cannotRight)
-				{
-					xVel = -8;
-					yVel = -10;
+				{if(input.isKeyPressed(KeyEvent.VK_F)){
+					xVel = -16;
+					yVel = -18;
+				}	
+				else {
+					xVel = -12;
+					yVel = -14;
+				}
 				}
 				else if(cannotLeft)
-				{
-					xVel = 8;
-					yVel = -10;
+				{	if(input.isKeyPressed(KeyEvent.VK_F)){
+						xVel = 16;
+						yVel = -18;
+					}	
+					else {
+						xVel = 12;
+						yVel = -14;
+					}
 				}
-				spaceHeld = true;
+				lastwalljump=System.currentTimeMillis();
 			}
-			if (yVel<=MAX_FALLING_SPEED)
+			if(yVel<=MAX_FALLING_SPEED)
 				yVel+=gravity;
 		}
 		xPos+=xVel;
 		yPos+=yVel;
+		cannotRight = false;
+		cannotLeft = false;
+		touchingBottom=false;
+		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT );
+		leftHitBox = new Rectangle(xPos-4,yPos+4,8,MEATBOY_HEIGHT-4);
+		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+4,8,MEATBOY_HEIGHT-4);
+		checkCollisions();
 		if(yPos>level.getHeight()){
 			restart();
 		}
@@ -215,17 +228,6 @@ public class MeatBoy {
 			yPos=0; 
 			yVel=0;
 		}
-		xPos+=xVel;
-		yPos+=yVel;
-		cannotRight = false;
-		cannotLeft = false;
-		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT );
-		leftHitBox = new Rectangle(xPos-4,yPos+8,8,MEATBOY_HEIGHT-16);
-		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+8,8,MEATBOY_HEIGHT-16);
-		checkCollisions();
-		holdingLeft = false;
-		holdingRight = false;
-		touchingBottom = false;
 		xscroll=xPos;
 		yscroll=yPos;
 		
@@ -245,6 +247,7 @@ public class MeatBoy {
 			boolean hitsaw = checkCircleCollision(saws.get(i));
 			if(hitsaw){
 				alive=false;
+				System.out.println("hit a saw");
 			}
 		}
 		if(alive){
@@ -259,19 +262,16 @@ public class MeatBoy {
 					}
 					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
 					{
-						System.out.println("Left");
 						xPos = temp.getLeft()-MEATBOY_WIDTH;
 						cannotRight = true;
 					}
 					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
 					{
-						System.out.println("Right");
 						xPos = temp.getRight();
 						cannotLeft = true;
 					}
 					else if (yVel>=0 && yPos+MEATBOY_HEIGHT<temp.getBottom())//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
 					{	
-						System.out.println("top");
 						yVel = 0;
 						standingLeft = temp.getLeft();
 						standingRight = temp.getRight();
@@ -281,22 +281,25 @@ public class MeatBoy {
 					else//(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
 					{
 						touchingBottom = true;
-						System.out.println("bottom");
 						yPos = temp.getBottom();
 						yVel = 0;
 					}
 				}	
 				else{
+					
 					if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
-					{
+					{	
+						System.out.println("first if");
 						inAir = true;
 					}
 				if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
 					{
+					System.out.println("left hbox");
 						cannotLeft= true;
 					}
 				else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
 					{
+					System.out.println("right hbox");
 						cannotRight = true;
 					}
 				}

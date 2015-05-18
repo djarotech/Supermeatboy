@@ -4356,7 +4356,7 @@
   <object id="18" x="216" y="116" width="70" height="70">
    <ellipse/>
   </object>
-  <object id="24" x="107" y="208" width="25" height="25">
+  <object id="24" x="105" y="220" width="25" height="25">
    <ellipse/>
   </object>
   <object id="54" x="224" y="221" width="50" height="50">
@@ -4365,7 +4365,7 @@
   <object id="55" x="66" y="308" width="25" height="25">
    <ellipse/>
   </object>
-  <object id="57" x="43" y="28" width="70" height="70">
+  <object id="57" x="30" y="15" width="70" height="70">
    <ellipse/>
   </object>
   <object id="58" x="460" y="129" width="20" height="20">

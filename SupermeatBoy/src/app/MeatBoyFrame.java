@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 
 public class MeatBoyFrame extends JFrame {
 	public MeatBoyFrame() {
-		setSize(640,480);
+		setSize(640,520);
 		MeatBoyLevel level1 = new MeatBoyLevel(this);
 		Image imgicon=Toolkit.getDefaultToolkit().createImage("resources/meatboystanding.png");
 		setIconImage(imgicon);
