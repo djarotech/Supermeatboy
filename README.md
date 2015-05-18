@@ -1,19 +1,28 @@
 #To do: number of(*) means priority level
-****walljumping
 
-*Fix small collision problems
+*Fix small collision problems. Corners of platforms are glitchy.
 	
 *** different platforms 
 
-	-the platforms pairs that alternate, one becoming invisible, the other becoming visible
-
-	-platforms that disappear after they are touched
-
 	-moving platforms
 
-	-spikes
+	-add salt from the salt level
+	
+	-add lava
 
-	-??? Add other ideas, put into this readme
+	-add sawblade shooters
+
+	-add keys/locks
+
+-more levels
+
+-bandages
+
+-fans
+
+-AI, monsters that chase the player
+
+-different characters. Altering their gravity, and attributes. May add things like double jump. Should add character select screen
 
 -monsters , meatgirl , any other types of characters.
 

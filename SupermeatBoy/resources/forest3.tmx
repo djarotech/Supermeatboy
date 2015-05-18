@@ -2403,9 +2403,9 @@
    <tile gid="1057"/>
    <tile gid="1058"/>
    <tile gid="1059"/>
-   <tile gid="1234"/>
-   <tile gid="1235"/>
-   <tile gid="1236"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2463,9 +2463,9 @@
    <tile gid="1087"/>
    <tile gid="1088"/>
    <tile gid="1089"/>
-   <tile gid="1264"/>
-   <tile gid="1265"/>
-   <tile gid="1266"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2523,9 +2523,9 @@
    <tile gid="1117"/>
    <tile gid="1118"/>
    <tile gid="1119"/>
-   <tile gid="1294"/>
-   <tile gid="1295"/>
-   <tile gid="1296"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2583,12 +2583,12 @@
    <tile gid="1066"/>
    <tile gid="1067"/>
    <tile gid="1068"/>
-   <tile gid="1135"/>
-   <tile gid="1136"/>
-   <tile gid="1137"/>
-   <tile gid="1234"/>
-   <tile gid="1235"/>
-   <tile gid="1236"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2643,12 +2643,12 @@
    <tile gid="1096"/>
    <tile gid="1097"/>
    <tile gid="1098"/>
-   <tile gid="1165"/>
-   <tile gid="1166"/>
-   <tile gid="1167"/>
-   <tile gid="1264"/>
-   <tile gid="1265"/>
-   <tile gid="1266"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2703,12 +2703,12 @@
    <tile gid="1126"/>
    <tile gid="1127"/>
    <tile gid="1128"/>
-   <tile gid="1195"/>
-   <tile gid="1196"/>
-   <tile gid="1197"/>
-   <tile gid="1294"/>
-   <tile gid="1295"/>
-   <tile gid="1296"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2763,14 +2763,14 @@
    <tile gid="1067"/>
    <tile gid="1068"/>
    <tile gid="1097"/>
-   <tile gid="1057"/>
-   <tile gid="1058"/>
-   <tile gid="1059"/>
-   <tile gid="1060"/>
-   <tile gid="1061"/>
-   <tile gid="1062"/>
-   <tile gid="1234"/>
-   <tile gid="1235"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="1236"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2823,15 +2823,15 @@
    <tile gid="1097"/>
    <tile gid="1098"/>
    <tile gid="1097"/>
-   <tile gid="1087"/>
-   <tile gid="1088"/>
-   <tile gid="1089"/>
-   <tile gid="1090"/>
-   <tile gid="1091"/>
-   <tile gid="1092"/>
-   <tile gid="1264"/>
-   <tile gid="1265"/>
-   <tile gid="1266"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2883,15 +2883,15 @@
    <tile gid="1127"/>
    <tile gid="1128"/>
    <tile gid="1097"/>
-   <tile gid="1117"/>
-   <tile gid="1118"/>
-   <tile gid="1119"/>
-   <tile gid="1120"/>
-   <tile gid="1121"/>
-   <tile gid="1122"/>
-   <tile gid="1294"/>
-   <tile gid="1295"/>
-   <tile gid="1296"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -5792,13 +5792,6 @@
   <object id="13" x="0" y="380" width="198.667" height="97.3333"/>
   <object id="14" x="158.667" y="137.333" width="41.3333" height="264"/>
   <object id="16" x="0" y="96" width="100" height="244"/>
-  <object id="24" x="902.667" y="317.333" width="37.3333" height="160"/>
-  <object id="25" x="941.333" y="352" width="17.3333" height="126.667"/>
-  <object id="26" x="958.667" y="366.667" width="21.3333" height="112"/>
-  <object id="27" x="980" y="381.333" width="18.6667" height="97.3333"/>
-  <object id="29" x="997.333" y="408" width="24" height="69.3333"/>
-  <object id="30" x="1021.33" y="429.333" width="16" height="50"/>
-  <object id="31" x="1038.67" y="440" width="21.3333" height="38.6667"/>
   <object id="32" x="640" y="298.667" width="262.667" height="101.333"/>
   <object id="34" x="662.667" y="398.667" width="237.333" height="20"/>
   <object id="35" x="678.667" y="418.667" width="221.333" height="20"/>

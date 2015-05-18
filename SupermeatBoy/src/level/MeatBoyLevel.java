@@ -44,7 +44,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		yscroll=0;
 		frame_height=c.getHeight()-40;
 		frame_width=c.getWidth();
-		String src = "resources/factory1.tmx";	//change this to try other levels
+		String src = "resources/forest5.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();

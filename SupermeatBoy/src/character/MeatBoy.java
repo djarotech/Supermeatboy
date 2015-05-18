@@ -180,14 +180,15 @@ public class MeatBoy {
 			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
 			{
 				if(cannotRight)
-				{if(input.isKeyPressed(KeyEvent.VK_F)){
-					xVel = -16;
-					yVel = -18;
-				}	
-				else {
-					xVel = -12;
-					yVel = -14;
-				}
+				{
+					if(input.isKeyPressed(KeyEvent.VK_F)){
+						xVel = -16;
+						yVel = -18;
+					}	
+					else {
+						xVel = -12;
+						yVel = -14;
+					}
 				}
 				else if(cannotLeft)
 				{	if(input.isKeyPressed(KeyEvent.VK_F)){
