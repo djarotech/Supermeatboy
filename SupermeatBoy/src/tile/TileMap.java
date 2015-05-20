@@ -139,8 +139,7 @@ public class TileMap {
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
 							stationary[r][c]=alltiles.get(whichTile-1);	
-							if(whichTile==alltiles.size()-1){
-								System.out.println("sup");
+							if(whichTile-1==1){
 								bandagegirl=new BandageGirl(c*TILE_SIZE,r*TILE_SIZE,TILE_SIZE);	
 							}
 						}
@@ -155,9 +154,10 @@ public class TileMap {
 				for(r=0;r<moving.length;r++){
 					for(c=0;c<moving[r].length;c++){
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						if(whichTile==alltiles.size()){
+						if(whichTile-1==2){
 							DisappearPlat p = new DisappearPlat(c*TILE_SIZE,r*TILE_SIZE);
 							dplist.add(p);
+							
 						}
 						
 						gidNumber++;
@@ -170,11 +170,9 @@ public class TileMap {
 				for(r=0;r<monsters.length;r++){
 					for(c=0;c<monsters[r].length;c++){
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						//find the init positions of meatboy, any other monsters
-						if(whichTile==alltiles.size()-2){	//this gets meatboy because you are supposed to load the character.png
+						if(whichTile-1==0){	//this gets meatboy because you are supposed to load the character.png
 							mbxstart=c*TILE_SIZE;			//tileset last when making levels in Tiled
 							mbystart=r*TILE_SIZE;
-							System.out.println("Found meatboy" + mbxstart +" "+ mbystart);
 						}
 						gidNumber++;
 					}

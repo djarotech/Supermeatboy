@@ -40,11 +40,9 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private TileMap tmap;
 	private boolean finished;
 	public MeatBoyLevel(Component c)   {
-		xscroll=0;
-		yscroll=0;
 		frame_height=c.getHeight()-40;
 		frame_width=c.getWidth();
-		String src = "resources/forest5.tmx";	//change this to try other levels
+		String src = "resources/forest6.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -60,9 +58,9 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		player = new MeatBoy(c,this, mbxstart,mbystart);	
 		destination = tmap.getBandageGirl();
 		//start updating this level
-		this.setOpaque(true);
 		time=new Timer(40,this);
 		time.start();
+
 		
 	}
 	public void update(){
@@ -95,7 +93,6 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 					dplist.get(i).getAnimation().update();
 				}
 			}
-			
 		}
 	}
 	public void paintComponent(Graphics g){
@@ -126,6 +123,9 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 					);
 			}
 			else if(tmp.getAnimation().hasLooped()){
+				if(player.getBotHitbox().intersects(tmp.getHitbox())){
+					player.setInAir();
+				}
 				iter.remove();
 			}
 		}
