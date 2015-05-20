@@ -6,8 +6,13 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
+import animation.Animation;
 import platform.DisappearPlat;
 import platform.BuzzSaw;
 import platform.Platform;
@@ -23,12 +28,14 @@ public class MeatBoy {
 	private ArrayList<Platform> platforms;
 	private ArrayList<BuzzSaw> saws;
 	private ArrayList<DisappearPlat> dplist;
+	private Animation deathanimation;
 	//MeatBoy properties:
 	private final int MEATBOY_WIDTH =20;
 	private final int MEATBOY_HEIGHT =20;
 	private Rectangle hitbox;
 	private Rectangle leftHitBox;
 	private Rectangle rightHitBox;
+	private Rectangle botHitBox;
 	private boolean alive;
 	private Image meatboy;
 	private Image sprintleft;
@@ -50,67 +57,79 @@ public class MeatBoy {
 	private int standingRight;
 	private long lastwalljump;
 	private long walljumpdelay;
+	private boolean spaceflag;
 	//touching wall restrictions
 	private boolean cannotLeft;
 	private boolean cannotRight;
-	private boolean holdingLeft;
-	private boolean holdingRight;
 	private boolean touchingBottom;
 	
-    private BufferedImage offscreen;
+
     private double gravity;
+	
     
 	public MeatBoy(Component c,MeatBoyLevel lev,int x, int y) {
 		cannotLeft = false;
 		cannotRight = false;
-		holdingLeft = false;
-		holdingRight = false;
 		touchingBottom = false;
-		initXPos=x;
-		initYPos=y;
-		xPos=x;
-		yPos=y;
-		xscroll=x;
-		yscroll=y;
+		alive=true;
+		inAir=true;
+		initXPos=xPos=xscroll=x;
+		initYPos=yPos=yscroll=y;
 		gravity =1.1;
 		xAcceleration = 2;
 		MAX_SPEED = 17;
 		MAX_FALLING_SPEED = 20;
 		lastwalljump=0;
 		walljumpdelay=200;
-		offscreen = new BufferedImage(MEATBOY_WIDTH,MEATBOY_HEIGHT,BufferedImage.TYPE_INT_RGB);
+		
 		level=lev;
 		platforms = level.getPlatforms();
 		saws=level.getSaws();
 		dplist=level.getDPs();
-		offscreen=null;
-		alive=true;
-		inAir=true;
+
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
-		meatboy =Toolkit.getDefaultToolkit().createImage("resources/meatboystanding.png");
-		sprintleft =Toolkit.getDefaultToolkit().createImage("resources/sprintLeft.png");
-		sprintright =Toolkit.getDefaultToolkit().createImage("resources/sprintRight.png");
+		leftHitBox = new Rectangle(xPos-4,yPos+4,8,MEATBOY_HEIGHT-4);
+		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+4,8,MEATBOY_HEIGHT-4);
+		botHitBox = new Rectangle(xPos,yPos+MEATBOY_HEIGHT-4,20,4);
+		
+		deathanimation = new Animation();
+		try{
+		BufferedImage[] deathframes = new BufferedImage[7];
+		BufferedImage bigimage = ImageIO.read(new File("resources/deathanim.png"));
+			for(int i=6;i>=0;i--){
+				deathframes[i]=bigimage.getSubimage(0, i*110, 148, 110);
+			}
+			deathanimation.setFrames(deathframes);
+			deathanimation.setDelay(0);
+		meatboy =ImageIO.read(new File("resources/meatboystanding.png"));
+		sprintleft =ImageIO.read(new File("resources/sprintLeft.png"));
+		sprintright =ImageIO.read(new File("resources/sprintRight.png"));
+		}catch (IOException e) {e.printStackTrace();}
+		
 		currentState=meatboy;
 		input= new MeatBoyInput(c);
 	}
 	public void move(){
 		currentState=meatboy;
-		if(!isAlive()){
+		if(!alive){
 			restart();
 		}
 		if(input.isKeyPressed(KeyEvent.VK_R)){
 			restart();
 		}
 		if(!inAir){
-			if(input.isKeyPressed(KeyEvent.VK_UP)){
+			if(input.isKeyPressed(KeyEvent.VK_SPACE)){
 				yVel=-14;
+				spaceflag = false;
 				inAir=true;
 			}
-			if(input.isKeyPressed(KeyEvent.VK_UP)&&input.isKeyPressed(KeyEvent.VK_F))
+			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&input.isKeyPressed(KeyEvent.VK_F))
+			{
 				yVel=-18;
+				spaceflag = false;
+			}
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
-				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
 				else if(xVel<MAX_SPEED*1.5&&input.isKeyPressed(KeyEvent.VK_F)&&xVel>=0)
@@ -124,14 +143,12 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
-				holdingLeft = true;
 				if(cannotLeft)
 					xVel = 0;
 				else if(xVel>-MAX_SPEED*1.5 && input.isKeyPressed(KeyEvent.VK_F)&&xVel<=0)
 					xVel-=xAcceleration;
-				else if(xVel>-MAX_SPEED){
+				else if(xVel>-MAX_SPEED)
 					xVel-=xAcceleration;
-				}
 				else if(input.isKeyPressed(KeyEvent.VK_F))
 					xVel = -MAX_SPEED*1.5;
 				else 
@@ -144,7 +161,6 @@ public class MeatBoy {
 			
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
-				holdingRight=true;
 				if (cannotRight)
 					xVel=0;
 				else if(xVel<MAX_SPEED*1.5&&input.isKeyPressed(KeyEvent.VK_F)&&xVel>=0)
@@ -158,7 +174,6 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
-				holdingLeft = true;
 				if(cannotLeft)
 					xVel = 0;
 				else if(xVel>-MAX_SPEED*1.5 && input.isKeyPressed(KeyEvent.VK_F)&&xVel<=0)
@@ -177,8 +192,12 @@ public class MeatBoy {
 				xVel+=xAcceleration;
 			else
 				xVel=0;
-			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
+			if(!input.isKeyPressed(KeyEvent.VK_SPACE)){
+				spaceflag=true;
+			}
+			if(spaceflag&&input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
 			{
+				spaceflag=false;
 				if(cannotRight)
 				{
 					if(input.isKeyPressed(KeyEvent.VK_F)){
@@ -213,6 +232,7 @@ public class MeatBoy {
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT );
 		leftHitBox = new Rectangle(xPos-4,yPos+4,8,MEATBOY_HEIGHT-4);
 		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+4,8,MEATBOY_HEIGHT-4);
+		botHitBox = new Rectangle(xPos,yPos+MEATBOY_HEIGHT-4,20,4);
 		checkCollisions();
 		if(yPos>level.getHeight()){
 			restart();
@@ -233,13 +253,8 @@ public class MeatBoy {
 		yscroll=yPos;
 		
 	}
-
 	public void draw(Graphics g) {
-		//offscreen = new BufferedImage(MEATBOY_WIDTH,MEATBOY_HEIGHT,BufferedImage.TYPE_INT_RGB);
-		//Graphics offgc = offscreen.getGraphics();
-		//offgc.drawImage(currentState,0,0,MEATBOY_WIDTH,MEATBOY_HEIGHT, null);
 		g.drawImage(currentState,xPos-xscroll,yPos-yscroll,MEATBOY_WIDTH,MEATBOY_HEIGHT, null);
-		//offgc.dispose();
 	}
 	public void checkCollisions(){
 		dplist=level.getDPs();
@@ -260,23 +275,23 @@ public class MeatBoy {
 					if(temp instanceof DisappearPlat){
 						((DisappearPlat) temp).setTouched();
 					}
-					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
+					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+5 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
 					{
 						xPos = temp.getLeft()-MEATBOY_WIDTH;
 						cannotRight = true;
 					}
-					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
+					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-5) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
 					{
 						xPos = temp.getRight();
 						cannotLeft = true;
 					}
 					else if (yVel>=0 && yPos+MEATBOY_HEIGHT<temp.getBottom())//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
-					{	
-						yVel = 0;
-						standingLeft = temp.getLeft();
-						standingRight = temp.getRight();
-						yPos = temp.getTop()-MEATBOY_HEIGHT;
-						inAir=false;	
+					{
+							yVel = 0;
+							standingLeft = temp.getLeft();
+							standingRight = temp.getRight();
+							yPos = temp.getTop()-MEATBOY_HEIGHT;
+							inAir=false;
 					}
 					else//(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
 					{
@@ -286,17 +301,22 @@ public class MeatBoy {
 					}
 				}	
 				else{
-					
 					if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
 					{	
 						inAir = true;
 					}
-				if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
+					if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
 					{
+						if(temp instanceof DisappearPlat){
+							((DisappearPlat) temp).setTouched();
+						}
 						cannotLeft= true;
 					}
-				else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
-					{ 
+					else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
+					{
+						if(temp instanceof DisappearPlat){
+							((DisappearPlat) temp).setTouched();
+						}
 						cannotRight = true;
 					}
 				}
@@ -317,12 +337,16 @@ public class MeatBoy {
 	public void restart(){
 		dplist=level.getOriginalDPs();
 		level.resetDPs();
+		deathanimation.resetAnimation();
 		xPos = initXPos;
 		yPos = initYPos;
 		inAir = true;
 	}
 	public Rectangle getHitbox(){
 		return hitbox;
+	}
+	public Rectangle getBotHitbox(){
+		return botHitBox;
 	}
 	public boolean isAlive(){
 		return alive;
@@ -336,6 +360,9 @@ public class MeatBoy {
 	public boolean isInAir(){
 		return inAir;
 	}
+	public void setInAir(){
+		inAir=true;
+	}
 	public int getXScroll(){
 		return xscroll;
 	}
@@ -347,5 +374,8 @@ public class MeatBoy {
 	}
 	public void setYScroll(int y){
 		yscroll=y;
+	}
+	public Animation getAnimation(){
+		return deathanimation;
 	}
 }

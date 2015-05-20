@@ -34,10 +34,10 @@ public class DisappearPlat extends Platform {
 			bigimage = ImageIO.read(new File("resources/disappearing.png"));
 		} catch (IOException e) {e.printStackTrace();}
 		for(int i=0;i<11;i++){
-			arr[i]=bigimage.getSubimage(i*40, 0, 40, 62);
+			arr[i]=bigimage.getSubimage(i*41, 0, 41, 80);
 		}
 		animation.setFrames(arr);
-		animation.setDelay(60);
+		animation.setDelay(70);
 	}
 	public Animation getAnimation(){
 		return animation;
