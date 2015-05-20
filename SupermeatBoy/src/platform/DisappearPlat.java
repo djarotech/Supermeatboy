@@ -37,7 +37,7 @@ public class DisappearPlat extends Platform {
 			arr[i]=bigimage.getSubimage(i*41, 0, 41, 80);
 		}
 		animation.setFrames(arr);
-		animation.setDelay(60);
+		animation.setDelay(70);
 	}
 	public Animation getAnimation(){
 		return animation;
