@@ -57,6 +57,7 @@ public class MeatBoy {
 	private int standingRight;
 	private long lastwalljump;
 	private long walljumpdelay;
+	private boolean spaceflag;
 	//touching wall restrictions
 	private boolean cannotLeft;
 	private boolean cannotRight;
@@ -195,8 +196,12 @@ public class MeatBoy {
 				xVel+=xAcceleration;
 			else
 				xVel=0;
-			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
+			if(!input.isKeyPressed(KeyEvent.VK_SPACE)){
+				spaceflag=true;
+			}
+			if(spaceflag&&input.isKeyPressed(KeyEvent.VK_SPACE)&&System.currentTimeMillis()-lastwalljump>walljumpdelay)
 			{
+				spaceflag=false;
 				if(cannotRight)
 				{
 					if(input.isKeyPressed(KeyEvent.VK_F)){
