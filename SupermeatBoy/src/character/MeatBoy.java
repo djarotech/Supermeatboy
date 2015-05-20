@@ -124,10 +124,14 @@ public class MeatBoy {
 		if(!inAir){
 			if(input.isKeyPressed(KeyEvent.VK_SPACE)){
 				yVel=-14;
+				spaceflag = false;
 				inAir=true;
 			}
 			if(input.isKeyPressed(KeyEvent.VK_SPACE)&&input.isKeyPressed(KeyEvent.VK_F))
+			{
 				yVel=-18;
+				spaceflag = false;
+			}
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
 				holdingRight = true;
@@ -279,12 +283,12 @@ public class MeatBoy {
 					if(temp instanceof DisappearPlat){
 						((DisappearPlat) temp).setTouched();
 					}
-					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+18 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
+					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+5 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
 					{
 						xPos = temp.getLeft()-MEATBOY_WIDTH;
 						cannotRight = true;
 					}
-					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-18) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
+					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-5) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
 					{
 						xPos = temp.getRight();
 						cannotLeft = true;
