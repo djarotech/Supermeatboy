@@ -61,19 +61,15 @@ public class MeatBoy {
 	//touching wall restrictions
 	private boolean cannotLeft;
 	private boolean cannotRight;
-	private boolean holdingLeft;
-	private boolean holdingRight;
 	private boolean touchingBottom;
 	
-    private BufferedImage offscreen;
+
     private double gravity;
 	
     
 	public MeatBoy(Component c,MeatBoyLevel lev,int x, int y) {
 		cannotLeft = false;
 		cannotRight = false;
-		holdingLeft = false;
-		holdingRight = false;
 		touchingBottom = false;
 		alive=true;
 		inAir=true;
@@ -134,7 +130,6 @@ public class MeatBoy {
 			}
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
-				holdingRight = true;
 				if (cannotRight)
 					xVel=0;
 				else if(xVel<MAX_SPEED*1.5&&input.isKeyPressed(KeyEvent.VK_F)&&xVel>=0)
@@ -148,7 +143,6 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
-				holdingLeft = true;
 				if(cannotLeft)
 					xVel = 0;
 				else if(xVel>-MAX_SPEED*1.5 && input.isKeyPressed(KeyEvent.VK_F)&&xVel<=0)
@@ -167,7 +161,6 @@ public class MeatBoy {
 			
 			if(input.isKeyPressed(KeyEvent.VK_RIGHT)){
 				currentState=sprintright;
-				holdingRight=true;
 				if (cannotRight)
 					xVel=0;
 				else if(xVel<MAX_SPEED*1.5&&input.isKeyPressed(KeyEvent.VK_F)&&xVel>=0)
@@ -181,7 +174,6 @@ public class MeatBoy {
 			}
 			else if(input.isKeyPressed(KeyEvent.VK_LEFT)){
 				currentState=sprintleft;
-				holdingLeft = true;
 				if(cannotLeft)
 					xVel = 0;
 				else if(xVel>-MAX_SPEED*1.5 && input.isKeyPressed(KeyEvent.VK_F)&&xVel<=0)
