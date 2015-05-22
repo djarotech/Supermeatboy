@@ -82,7 +82,7 @@ public class MeatBoy {
 		gravity =1.1;
 		xAcceleration = 2;
 		MAX_SPEED = 17;
-		MAX_FALLING_SPEED = 20;
+		MAX_FALLING_SPEED = 18;
 		lastwalljump=0;
 		walljumpdelay=200;
 		

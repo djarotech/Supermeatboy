@@ -1703,8 +1703,8 @@
    <tile gid="1680"/>
    <tile gid="1680"/>
    <tile gid="1680"/>
-   <tile gid="1680"/>
-   <tile gid="1680"/>
+   <tile gid="0"/>
+   <tile gid="0"/>
    <tile gid="2"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -4371,37 +4371,37 @@
   <object id="60" x="529" y="91" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="62" x="668" y="180" width="20" height="20">
+  <object id="62" x="670" y="180" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="63" x="669" y="340" width="20" height="20">
+  <object id="63" x="670" y="340" width="20" height="20">
    <ellipse/>
   </object>
   <object id="64" x="670" y="300" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="65" x="668" y="278" width="20" height="20">
+  <object id="65" x="670" y="280" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="66" x="670" y="259" width="20" height="20">
+  <object id="66" x="670" y="260" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="67" x="668" y="200" width="20" height="20">
+  <object id="67" x="670" y="200" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="68" x="669" y="219" width="20" height="20">
+  <object id="68" x="670" y="220" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="69" x="670" y="238" width="20" height="20">
+  <object id="69" x="670" y="240" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="70" x="669" y="360" width="20" height="20">
+  <object id="70" x="670" y="360" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="72" x="670" y="379" width="20" height="20">
+  <object id="72" x="670" y="380" width="20" height="20">
    <ellipse/>
   </object>
-  <object id="73" x="668" y="320" width="20" height="20">
+  <object id="73" x="670" y="320" width="20" height="20">
    <ellipse/>
   </object>
   <object id="74" x="670" y="400" width="20" height="20">
