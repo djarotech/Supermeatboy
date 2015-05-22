@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import animation.Animation;
+import app.MeatBoyFrame;
 import platform.DisappearPlat;
 import platform.BuzzSaw;
 import platform.Platform;
+import platform.SawShooter;
 import level.MeatBoyLevel;
 import input.MeatBoyInput;
 
@@ -25,6 +27,7 @@ public class MeatBoy {
 	//Communicating with:
 	private MeatBoyLevel level;
 	private MeatBoyInput input;
+	private MeatBoyFrame frame;
 	private ArrayList<Platform> platforms;
 	private ArrayList<BuzzSaw> saws;
 	private ArrayList<DisappearPlat> dplist;
@@ -67,7 +70,7 @@ public class MeatBoy {
     private double gravity;
 	
     
-	public MeatBoy(Component c,MeatBoyLevel lev,int x, int y) {
+	public MeatBoy(MeatBoyFrame frame,MeatBoyLevel lev,int x, int y) {
 		cannotLeft = false;
 		cannotRight = false;
 		touchingBottom = false;
@@ -75,6 +78,7 @@ public class MeatBoy {
 		inAir=true;
 		initXPos=xPos=xscroll=x;
 		initYPos=yPos=yscroll=y;
+		this.frame=frame;
 		gravity =1.1;
 		xAcceleration = 2;
 		MAX_SPEED = 17;
@@ -83,10 +87,12 @@ public class MeatBoy {
 		walljumpdelay=200;
 		
 		level=lev;
+		
 		platforms = level.getPlatforms();
+		platforms.addAll(level.getSS());
 		saws=level.getSaws();
 		dplist=level.getDPs();
-
+		
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT);
 		leftHitBox = new Rectangle(xPos-4,yPos+4,8,MEATBOY_HEIGHT-4);
 		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+4,8,MEATBOY_HEIGHT-4);
@@ -94,20 +100,20 @@ public class MeatBoy {
 		
 		deathanimation = new Animation();
 		try{
-		BufferedImage[] deathframes = new BufferedImage[7];
-		BufferedImage bigimage = ImageIO.read(new File("resources/deathanim.png"));
-			for(int i=6;i>=0;i--){
-				deathframes[i]=bigimage.getSubimage(0, i*110, 148, 110);
-			}
-			deathanimation.setFrames(deathframes);
-			deathanimation.setDelay(0);
+//		BufferedImage[] deathframes = new BufferedImage[7];
+//		BufferedImage bigimage = ImageIO.read(new File("resources/deathanim.png"));
+//			for(int i=6;i>=0;i--){
+//				deathframes[i]=bigimage.getSubimage(0, i*110, 148, 110);
+//			}
+//			deathanimation.setFrames(deathframes);
+//			deathanimation.setDelay(40);
 		meatboy =ImageIO.read(new File("resources/meatboystanding.png"));
 		sprintleft =ImageIO.read(new File("resources/sprintLeft.png"));
 		sprintright =ImageIO.read(new File("resources/sprintRight.png"));
 		}catch (IOException e) {e.printStackTrace();}
 		
 		currentState=meatboy;
-		input= new MeatBoyInput(c);
+		input= new MeatBoyInput(frame);
 	}
 	public void move(){
 		currentState=meatboy;
@@ -253,8 +259,22 @@ public class MeatBoy {
 		yscroll=yPos;
 		
 	}
-	public void draw(Graphics g) {
-		g.drawImage(currentState,xPos-xscroll,yPos-yscroll,MEATBOY_WIDTH,MEATBOY_HEIGHT, null);
+	public void drawAnimation(Graphics g) {
+		while(!deathanimation.hasLooped()){
+				deathanimation.update();
+				g.drawImage(
+					deathanimation.getImage(),
+					200,
+					200,
+					null
+				);
+				try {
+					Thread.sleep(40);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		}
+		deathanimation.resetAnimation();
 	}
 	public void checkCollisions(){
 		dplist=level.getDPs();
@@ -335,12 +355,25 @@ public class MeatBoy {
 		return Math.max(min, Math.min(max,value));
 	}
 	public void restart(){
+//		if(!alive){
+//			level.setDeath(true);
+//			level.repaint();
+//		}
 		dplist=level.getOriginalDPs();
 		level.resetDPs();
-		deathanimation.resetAnimation();
 		xPos = initXPos;
 		yPos = initYPos;
+		xVel=0;
+		yVel=0;
 		inAir = true;
+	}
+	public void draw(Graphics g){
+		g.drawImage(
+			currentState,
+			xPos-xscroll,
+			yPos-yscroll,
+			null
+		);
 	}
 	public Rectangle getHitbox(){
 		return hitbox;
@@ -375,7 +408,7 @@ public class MeatBoy {
 	public void setYScroll(int y){
 		yscroll=y;
 	}
-	public Animation getAnimation(){
-		return deathanimation;
-	}
+//	public Animation getAnimation(){
+//		return deathanimation;
+//	}
 }

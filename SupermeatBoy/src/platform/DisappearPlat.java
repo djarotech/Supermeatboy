@@ -26,7 +26,7 @@ public class DisappearPlat extends Platform {
 		xscroll=0;
 		this.x=x;
 		this.y=y;
-		hitbox=new Rectangle(x,y,40,40);
+		hitbox=new Rectangle(x,y,WIDTH,HEIGHT);
 		bigimage = null;
 		animation = new Animation();
 		arr = new BufferedImage[11];	
@@ -49,10 +49,10 @@ public class DisappearPlat extends Platform {
 		return hitbox.x;
 	}
 	public int getRight(){
-		return hitbox.x+40;
+		return hitbox.x+WIDTH;
 	}
 	public int getBottom(){
-		return hitbox.y+40;
+		return hitbox.y+HEIGHT;
 	}
 	public int getX(){
 		return x-xscroll;
