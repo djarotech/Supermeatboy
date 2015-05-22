@@ -20,6 +20,7 @@ import character.BandageGirl;
 import platform.BuzzSaw;
 import platform.DisappearPlat;
 import platform.Platform;
+import platform.SawShooter;
 
 public class TileMap {
 	public static final int TILE_SIZE= 20;
@@ -45,12 +46,13 @@ public class TileMap {
 	private BandageGirl bandagegirl;
 	private int mbxstart;
 	private int mbystart;
+	private ArrayList<SawShooter> sslist;
 	
 	public TileMap(File tmx){
 		stationaryplats=new ArrayList<Platform>();
 		saws=new ArrayList<BuzzSaw>();
 		dplist=new ArrayList<DisappearPlat>();
-		//movingplats=new ArrayList<Platform>();
+		sslist=new ArrayList<SawShooter>();
 		tmxfile=tmx;
 		
 		try{
@@ -82,16 +84,17 @@ public class TileMap {
 				g.drawImage(background[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 			}
 		}
-		for(int r=0;r<numRows;r++){
-			for(int c=0;c<numCols;c++){
-				if(foreground[r][c]!=null)
-				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-			}
-		}
+		
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
 				if(stationary[r][c]!=null)
 				g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+			}
+		}
+		for(int r=0;r<numRows;r++){
+			for(int c=0;c<numCols;c++){
+				if(foreground[r][c]!=null)
+				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 			}
 		}
 		g.dispose();
@@ -154,12 +157,27 @@ public class TileMap {
 				for(r=0;r<moving.length;r++){
 					for(c=0;c<moving[r].length;c++){
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						if(whichTile-1==2){
+						if(whichTile==3){
 							DisappearPlat p = new DisappearPlat(c*TILE_SIZE,r*TILE_SIZE);
 							dplist.add(p);
 							
 						}
-						
+						if(whichTile==13){
+							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,15,0);
+							sslist.add(sh);
+						}
+						if(whichTile==14){
+							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,-15,0);
+							sslist.add(sh);
+						}
+						if(whichTile==15){
+							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,0,-15);
+							sslist.add(sh);
+						}
+						if(whichTile==16){
+							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,0,15);
+							sslist.add(sh);
+						}
 						gidNumber++;
 					}
 				}
@@ -217,6 +235,9 @@ public class TileMap {
 	}
 	public ArrayList<DisappearPlat> getDPs(){
 		return dplist;
+	}
+	public ArrayList<SawShooter> getSS(){
+		return sslist;
 	}
 	public int getNumCols(){
 		return numCols;

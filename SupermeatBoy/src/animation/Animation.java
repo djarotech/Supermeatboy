@@ -1,31 +1,35 @@
 package animation;
 import java.awt.image.BufferedImage;
+import org.omg.PortableServer.CurrentOperations;
 
 public class Animation {
 	private BufferedImage[] frames;
 	private int currentFrame;
 	private int delay;
-	private int startTime;
+	private long startTime;
 	private boolean haslooped;
 	public Animation(){
 		currentFrame=-1;
 		delay=-1;
-		startTime=(int)System.currentTimeMillis();
+		startTime=System.currentTimeMillis();
+		haslooped=false;
 	}
-	public void update(){
+	public boolean update(){
 		if(delay!=-1){
-			int elapsed = (int)System.currentTimeMillis()-startTime;
+			long elapsed = System.currentTimeMillis()-startTime;
 			if(elapsed>delay){
 				currentFrame++;
-				startTime=(int)System.currentTimeMillis();
-			}
-			if(currentFrame==frames.length){
-				currentFrame=0; //restart animation	
-				haslooped=true;
+				startTime=System.currentTimeMillis();
+				if(currentFrame==frames.length){
+					currentFrame=0; //restart animation	
+					haslooped=true;
+				}
+				return true;
 			}
 		}
 		else
 			System.out.println("You have not set a valid delay.");
+		return false;
 	}
 	public void setDelay(int d){
 		this.delay=d;
@@ -48,7 +52,7 @@ public class Animation {
 		if(currentFrame==-1){
 			System.out.println("You have not set the frames for this animation ");
 			return null;
-		}			
+		}
 		return frames[currentFrame];
 	}
 }
