@@ -1,4 +1,5 @@
 package level;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -42,10 +43,13 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private BufferedImage subbackground;
 	private TileMap tmap;
 	private boolean finished;
+	private int deathCounter;
+	
 	public MeatBoyLevel(MeatBoyFrame frame)   {
+		deathCounter=0;
 		frame_height=frame.getHeight()-40;
  		frame_width=frame.getWidth();
-		String src = "resources/forest7.tmx";	//change this to try other levels
+		String src = "resources/factory2.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -159,6 +163,11 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 					iter.remove();
 				}
 			}
+			g.setColor(Color.red);
+			g.drawString("Deaths: "+deathCounter,550,40);
+	}
+	public void incrementDeathCounter(){
+		deathCounter++;
 	}
 	public ArrayList<Platform> getPlatforms(){
 		return platformList;

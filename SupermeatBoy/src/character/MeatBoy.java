@@ -238,7 +238,7 @@ public class MeatBoy {
 		hitbox = new Rectangle(xPos,yPos,MEATBOY_WIDTH,MEATBOY_HEIGHT );
 		leftHitBox = new Rectangle(xPos-4,yPos+4,8,MEATBOY_HEIGHT-4);
 		rightHitBox = new Rectangle(xPos+MEATBOY_WIDTH -4,yPos+4,8,MEATBOY_HEIGHT-4);
-		botHitBox = new Rectangle(xPos,yPos+MEATBOY_HEIGHT-4,20,4);
+		botHitBox = new Rectangle(xPos+4,yPos+MEATBOY_HEIGHT-4,MEATBOY_WIDTH-4,4);
 		checkCollisions();
 		if(yPos>level.getHeight()){
 			restart();
@@ -278,68 +278,72 @@ public class MeatBoy {
 	}
 	public void checkCollisions(){
 		dplist=level.getDPs();
+		int counter=0;
 		alive=true;
+		ArrayList<Platform> tmplist = new ArrayList<Platform>();
+		tmplist.addAll(platforms);
+		tmplist.addAll(dplist);
+		for(int i=0;i<tmplist.size();i++){
+			Platform temp = tmplist.get(i);
+			if(hitbox.intersects(temp.getHitbox())){
+				if(temp instanceof DisappearPlat){
+					((DisappearPlat) temp).setTouched();
+				}
+				if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+5 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
+				{
+					xPos = temp.getLeft()-MEATBOY_WIDTH;
+					cannotRight = true;
+				}
+				else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-5) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
+				{
+					xPos = temp.getRight();
+					cannotLeft = true;
+				}
+				else if (yVel>=0 && yPos+MEATBOY_HEIGHT<temp.getBottom())//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
+				{
+						yVel = 0;
+						standingLeft = temp.getLeft();
+						standingRight = temp.getRight();
+						yPos = temp.getTop()-MEATBOY_HEIGHT;
+						inAir=false;
+				}
+				else//(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
+				{
+					touchingBottom = true;
+					yPos = temp.getBottom();
+					yVel = 0;
+				}
+			}	
+			else{
+				if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
+				{	
+					inAir = true;
+				}
+				if(!botHitBox.intersects(temp.getHitbox()))
+					counter++;
+				if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
+				{
+					if(temp instanceof DisappearPlat){
+						((DisappearPlat) temp).setTouched();
+					}
+					cannotLeft= true;
+				}
+				else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
+				{
+					if(temp instanceof DisappearPlat){
+						((DisappearPlat) temp).setTouched();
+					}
+					cannotRight = true;
+				}
+			}
+		}
+		if(counter==tmplist.size()){
+			inAir=true;
+		}
 		for(int i=0;i<saws.size()&&alive;i++){
 			boolean hitsaw = checkCircleCollision(saws.get(i));
 			if(hitsaw){
 				alive=false;
-			}
-		}
-		if(alive){
-			ArrayList<Platform> tmplist = new ArrayList<Platform>();
-			tmplist.addAll(platforms);
-			tmplist.addAll(dplist);
-			for(int i=0;i<tmplist.size();i++){
-				Platform temp = tmplist.get(i);
-				if(hitbox.intersects(temp.getHitbox())){
-					if(temp instanceof DisappearPlat){
-						((DisappearPlat) temp).setTouched();
-					}
-					if (Math.abs(xPos+MEATBOY_WIDTH-temp.getLeft())<=xVel+5 && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && rightHitBox.intersects(temp.getHitbox()))
-					{
-						xPos = temp.getLeft()-MEATBOY_WIDTH;
-						cannotRight = true;
-					}
-					else if (Math.abs(xPos-temp.getRight())<=Math.abs(xVel-5) && yPos>temp.getTop()-MEATBOY_HEIGHT && yPos<temp.getBottom() && leftHitBox.intersects(temp.getHitbox()))
-					{
-						xPos = temp.getRight();
-						cannotLeft = true;
-					}
-					else if (yVel>=0 && yPos+MEATBOY_HEIGHT<temp.getBottom())//(xPos>temp.getLeft()-MEATBOY_WIDTH && xPos<temp.getRight() && yPos+MEATBOY_HEIGHT-temp.getTop()<=yVel)
-					{
-							yVel = 0;
-							standingLeft = temp.getLeft();
-							standingRight = temp.getRight();
-							yPos = temp.getTop()-MEATBOY_HEIGHT;
-							inAir=false;
-					}
-					else//(xPos>=temp.getLeft()-MEATBOY_WIDTH && xPos<=temp.getRight() && (yPos+MEATBOY_HEIGHT>temp.getBottom()-1 && yPos<temp.getBottom()+1))
-					{
-						touchingBottom = true;
-						yPos = temp.getBottom();
-						yVel = 0;
-					}
-				}	
-				else{
-					if(!inAir && (xPos+MEATBOY_WIDTH<standingLeft+5 || xPos>standingRight-5))
-					{	
-						inAir = true;
-					}
-					if(inAir && leftHitBox.intersects(temp.getHitbox()) && !touchingBottom)
-					{
-						if(temp instanceof DisappearPlat){
-							((DisappearPlat) temp).setTouched();
-						}
-						cannotLeft= true;
-					}
-					else if (inAir && rightHitBox.intersects(temp.getHitbox()) && !touchingBottom)
-					{
-						if(temp instanceof DisappearPlat){
-							((DisappearPlat) temp).setTouched();
-						}
-						cannotRight = true;
-					}
-				}
 			}
 		}
 	}
@@ -361,6 +365,7 @@ public class MeatBoy {
 //		}
 		dplist=level.getOriginalDPs();
 		level.resetDPs();
+		level.incrementDeathCounter();
 		xPos = initXPos;
 		yPos = initYPos;
 		xVel=0;

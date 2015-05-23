@@ -1,6 +1,8 @@
 package tile;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +79,7 @@ public class TileMap {
 	}
 	public BufferedImage drawMap(){
 		BufferedImage bfImage=new BufferedImage(numCols*TILE_SIZE,numRows*TILE_SIZE,BufferedImage.TYPE_INT_ARGB);
-		Graphics g = bfImage.getGraphics();
+		Graphics2D g = (Graphics2D)bfImage.getGraphics();
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
 				if(background[r][c]!=null)
@@ -85,16 +87,36 @@ public class TileMap {
 			}
 		}
 		
-		for(int r=0;r<numRows;r++){
-			for(int c=0;c<numCols;c++){
-				if(stationary[r][c]!=null)
-				g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+		
+		if(tmxfile.getAbsolutePath().contains("factory")){
+			float opacity = 0.6f;
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(foreground[r][c]!=null)
+					g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
+			}
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(stationary[r][c]!=null)
+					g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
 			}
 		}
-		for(int r=0;r<numRows;r++){
-			for(int c=0;c<numCols;c++){
-				if(foreground[r][c]!=null)
-				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+		else{
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(stationary[r][c]!=null)
+					g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
+			}
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(foreground[r][c]!=null)
+					g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
 			}
 		}
 		g.dispose();

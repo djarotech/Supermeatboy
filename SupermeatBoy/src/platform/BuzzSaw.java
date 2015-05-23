@@ -27,7 +27,7 @@ public class BuzzSaw {
 		bigimage = null;
 		
 		try {
-			bigimage = ImageIO.read(new File("resources/buzzsaw.png"));
+			bigimage = ImageIO.read(new File("resources/buzzsaw2.png"));
 		} catch (IOException e) {e.printStackTrace();}
 		
 		rotateAnimation = new Animation();
