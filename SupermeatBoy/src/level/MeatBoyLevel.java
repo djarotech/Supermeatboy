@@ -49,7 +49,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		deathCounter=0;
 		frame_height=frame.getHeight()-40;
  		frame_width=frame.getWidth();
-		String src = "resources/factory2.tmx";	//change this to try other levels
+		String src = "resources/forest7.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -66,11 +66,13 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		sslist=tmap.getSS(); //ss means sawshooter
 		player = new MeatBoy(frame,this, mbxstart,mbystart);	
 		destination = tmap.getBandageGirl();
-		//start updating this level
 		time=new Timer(40,this);
+		//start updating this level
+		start();
+	}
+	public void start(){
 		time.start(); 
 
-		
 	}
 	public void update(){
 		if(!finished){
@@ -100,20 +102,38 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 							sslist.get(i).getXVel(),
 							sslist.get(i).getYVel())
 					);
+					System.out.println("added");
 				}
 			}
+			
 			for(int i=0;i<sawlist.size();i++){
-
 				sawlist.get(i).getAnimation().update();
 				sawlist.get(i).setXScroll(xscroll);
 				sawlist.get(i).setYScroll(yscroll);
 				if(sawlist.get(i).isMoving()){
 					sawlist.get(i).move();
-					if(sawlist.get(i).getX()>width||sawlist.get(i).getY()>height||sawlist.get(i).getY()<0 ||sawlist.get(i).getX()<0){
-						sawlist.remove(i);
+					boolean removed = false;
+					if(sawlist.get(i).canRemove()){
+						if(sawlist.get(i).getX()>width||sawlist.get(i).getY()>height||sawlist.get(i).getY()<0 ||sawlist.get(i).getX()<0){
+							sawlist.remove(i);
+							removed=true;
+						}
+						else{
+							ArrayList<Platform> tmplist = new ArrayList<Platform>();
+							tmplist.addAll(platformList);
+							tmplist.addAll(dplist);
+							
+							for(int j=0;j<tmplist.size()&&!removed;j++){
+								if(checkCircleCollision(sawlist.get(i), tmplist.get(j))){
+									sawlist.remove(i);
+									removed=true;
+								}
+							}
+							
+						}
 					}
+					
 				}
-			
 			}
 			for(int i=0;i<dplist.size();i++){
 				dplist.get(i).setXScroll(xscroll);
@@ -165,6 +185,17 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 			}
 			g.setColor(Color.red);
 			g.drawString("Deaths: "+deathCounter,550,40);
+	}
+	public boolean checkCircleCollision(BuzzSaw s, Platform p){
+		double closestx = clamp(s.getXMiddle(),p.getLeft(), p.getRight());
+		double closesty = clamp(s.getYMiddle(),p.getTop(),p.getBottom());
+		double dx=s.getXMiddle()-closestx;
+		double dy=s.getYMiddle()-closesty;
+		double distance = (Math.pow(dx,2)+Math.pow(dy, 2));
+		return distance<=(s.getRadius()*s.getRadius());
+	}
+	private double clamp(double value, int min, int max){
+		return Math.max(min, Math.min(max,value));
 	}
 	public void incrementDeathCounter(){
 		deathCounter++;
