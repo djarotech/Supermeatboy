@@ -49,7 +49,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		deathCounter=0;
 		frame_height=frame.getHeight()-40;
  		frame_width=frame.getWidth();
-		String src = "resources/forest7.tmx";	//change this to try other levels
+		String src = "resources/factory3.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -102,7 +102,6 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 							sslist.get(i).getXVel(),
 							sslist.get(i).getYVel())
 					);
-					System.out.println("added");
 				}
 			}
 			
