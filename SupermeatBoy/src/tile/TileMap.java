@@ -102,18 +102,22 @@ public class TileMap {
 			}
 		}
 		else{
-			for(int r=0;r<numRows;r++){
-				for(int c=0;c<numCols;c++){
-					if(stationary[r][c]!=null)
-					g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-				}
-			}
+			float opacity = 0.8f;
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 			for(int r=0;r<numRows;r++){
 				for(int c=0;c<numCols;c++){
 					if(foreground[r][c]!=null)
 					g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
 				}
 			}
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(stationary[r][c]!=null)
+					g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
+			}
+			
 		}
 		g.dispose();
 		return bfImage;

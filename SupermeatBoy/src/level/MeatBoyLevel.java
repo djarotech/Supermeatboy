@@ -36,7 +36,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private ArrayList<BuzzSaw> sawlist;
 	private ArrayList<DisappearPlat> originaldplist;
 	private ArrayList<DisappearPlat> dplist;
-	private ArrayList<SawShooter > sslist;
+	private ArrayList<SawShooter> sslist;
 	private int xscroll;
 	private int yscroll;
 	private BufferedImage entirebackground;
@@ -44,12 +44,13 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private TileMap tmap;
 	private boolean finished;
 	private int deathCounter;
+	public static int BUFFER=40; //buffer of two tiles for spawning purposes
 	
 	public MeatBoyLevel(MeatBoyFrame frame)   {
 		deathCounter=0;
 		frame_height=frame.getHeight()-40;
  		frame_width=frame.getWidth();
-		String src = "resources/factory3.tmx";	//change this to try other levels
+		String src = "resources/forest5.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -58,7 +59,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		subbackground=null;
 		width=tmap.getNumCols()*TileMap.TILE_SIZE;
 		height=tmap.getNumRows()*TileMap.TILE_SIZE;
-		
+ 		
 		platformList=tmap.getPlatforms();
 		sawlist=tmap.getSaws();
 		originaldplist=new ArrayList<DisappearPlat>(tmap.getDPs());
@@ -113,15 +114,15 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 					sawlist.get(i).move();
 					boolean removed = false;
 					if(sawlist.get(i).canRemove()){
-						if(sawlist.get(i).getX()>width||sawlist.get(i).getY()>height||sawlist.get(i).getY()<0 ||sawlist.get(i).getX()<0){
+						if(sawlist.get(i).getX()>width||sawlist.get(i).getY()>height){
 							sawlist.remove(i);
 							removed=true;
+							System.out.println("sup");
 						}
 						else{
 							ArrayList<Platform> tmplist = new ArrayList<Platform>();
 							tmplist.addAll(platformList);
 							tmplist.addAll(dplist);
-							
 							for(int j=0;j<tmplist.size()&&!removed;j++){
 								if(checkCircleCollision(sawlist.get(i), tmplist.get(j))){
 									sawlist.remove(i);
