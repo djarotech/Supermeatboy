@@ -1,6 +1,8 @@
 package tile;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +31,6 @@ public class TileMap {
 	private Tile[][] background;
 	private Tile[][] foreground;
 	private Tile[][] stationary;
-	private Tile[][] moving;
-	private Tile[][] monsters;
 	private File tmxfile;
 	private ArrayList<Platform> stationaryplats;
 	private ArrayList<BuzzSaw> saws;
@@ -69,15 +69,13 @@ public class TileMap {
 		background = new Tile[numRows][numCols];
 		stationary = new Tile[numRows][numCols];
 		foreground = new Tile[numRows][numCols];
-		moving = new Tile[numRows][numCols];
-		monsters = new Tile[numRows][numCols];
 		try {
 			loadMap();
 		} catch (XPathExpressionException | SAXException| ParserConfigurationException | IOException e) {e.printStackTrace();}
 	}
 	public BufferedImage drawMap(){
 		BufferedImage bfImage=new BufferedImage(numCols*TILE_SIZE,numRows*TILE_SIZE,BufferedImage.TYPE_INT_ARGB);
-		Graphics g = bfImage.getGraphics();
+		Graphics2D g = (Graphics2D)bfImage.getGraphics();
 		for(int r=0;r<numRows;r++){
 			for(int c=0;c<numCols;c++){
 				if(background[r][c]!=null)
@@ -85,17 +83,41 @@ public class TileMap {
 			}
 		}
 		
-		for(int r=0;r<numRows;r++){
-			for(int c=0;c<numCols;c++){
-				if(stationary[r][c]!=null)
-				g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+		
+		if(tmxfile.getAbsolutePath().contains("factory")){
+			float opacity = 0.6f;
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(foreground[r][c]!=null)
+					g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
+			}
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(stationary[r][c]!=null)
+					g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
 			}
 		}
-		for(int r=0;r<numRows;r++){
-			for(int c=0;c<numCols;c++){
-				if(foreground[r][c]!=null)
-				g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+		else{
+			float opacity = 0.8f;
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(foreground[r][c]!=null)
+					g.drawImage(foreground[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
 			}
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+			for(int r=0;r<numRows;r++){
+				for(int c=0;c<numCols;c++){
+					if(stationary[r][c]!=null)
+					g.drawImage(stationary[r][c].getImage(), c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+				}
+			}
+			
 		}
 		g.dispose();
 		return bfImage;
@@ -141,62 +163,45 @@ public class TileMap {
 					for(c=0;c<stationary[r].length;c++){
 						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
 						if(whichTile>0){
-							stationary[r][c]=alltiles.get(whichTile-1);	
-							if(whichTile-1==1){
-								bandagegirl=new BandageGirl(c*TILE_SIZE,r*TILE_SIZE,TILE_SIZE);	
-							}
-						}
-						
-						gidNumber++;
-					}
-				}
-			break;
-			case "moving":
-				gidNumber=1;
-				whichTile=0;
-				for(r=0;r<moving.length;r++){
-					for(c=0;c<moving[r].length;c++){
-						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						if(whichTile==3){
-							DisappearPlat p = new DisappearPlat(c*TILE_SIZE,r*TILE_SIZE);
-							dplist.add(p);
 							
-						}
-						if(whichTile==13){
-							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,15,0);
-							sslist.add(sh);
-						}
-						if(whichTile==14){
-							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,-15,0);
-							sslist.add(sh);
-						}
-						if(whichTile==15){
-							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,0,-15);
-							sslist.add(sh);
-						}
-						if(whichTile==16){
-							SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,0,15);
-							sslist.add(sh);
+							if(whichTile==2){
+								bandagegirl=new BandageGirl(c*TILE_SIZE,r*TILE_SIZE,TILE_SIZE);	
+								stationary[r][c]=alltiles.get(whichTile-1);	
+							}
+							else if(whichTile==3){
+								DisappearPlat p = new DisappearPlat(c*TILE_SIZE,r*TILE_SIZE);
+								dplist.add(p);
+								
+							}
+							else if(whichTile==13){
+								SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,15,0, SawShooter.HORIZONTAL_DIRECTION);
+								sslist.add(sh);
+							}
+							else if(whichTile==14){
+								SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,-15,0, SawShooter.HORIZONTAL_DIRECTION);
+								sslist.add(sh);
+							}
+							else if(whichTile==15){
+								SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,0,-15, SawShooter.VERTICAL_DIRECTION);
+								sslist.add(sh);
+							}
+							else if(whichTile==16){
+								SawShooter sh= new SawShooter(c*TILE_SIZE, r*TILE_SIZE, 1000,0,15, SawShooter.VERTICAL_DIRECTION);
+								sslist.add(sh);
+							}
+							else if(whichTile==1){	//this gets meatboy because you are supposed to load the character.png
+								mbxstart=c*TILE_SIZE;			//tileset last when making levels in Tiled
+								mbystart=r*TILE_SIZE;
+								
+							}
+							else 
+								stationary[r][c]=alltiles.get(whichTile-1);	
 						}
 						gidNumber++;
 					}
 				}
 			break;
-			case "monsters":
-				gidNumber=1;
-				whichTile=0;
-				for(r=0;r<monsters.length;r++){
-					for(c=0;c<monsters[r].length;c++){
-						whichTile =Integer.parseInt(path.evaluate("/map/layer["+i+"]/data[1]/tile["+gidNumber+"]/@gid",doc));
-						if(whichTile-1==0){	//this gets meatboy because you are supposed to load the character.png
-							mbxstart=c*TILE_SIZE;			//tileset last when making levels in Tiled
-							mbystart=r*TILE_SIZE;
-						}
-						gidNumber++;
-					}
-				}
-			break;
-			default: System.out.println("You entered an unrecognizable layer.");
+			default: System.out.println("You entered an unrecognizable layer. Known layers: \nStationary\nForeground\nBackground");
 			}
 		}
 		int numplats = Integer.parseInt(path.evaluate("count(/map/objectgroup[@name=\"rectangle\"]/object)", doc));

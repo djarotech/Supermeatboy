@@ -8,7 +8,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class SawShooter extends Platform{
-	
+	public static final int HORIZONTAL_DIRECTION=1;
+	public static final int VERTICAL_DIRECTION=2;
 	private static final int HEIGHT = 40;
 	private static final int WIDTH = 40;
 	private long delay;
@@ -21,15 +22,19 @@ public class SawShooter extends Platform{
 	private int xscroll;
 	private int yscroll;
 	private BufferedImage image;
-	public SawShooter(int x,int y, long delay, int xVel, int yVel){
+	public SawShooter(int x,int y, long delay, int xVel, int yVel, int whichdir){
 		this.x=x;	
 		this.y=y;
 		this.xVel=xVel;
 		this.yVel=yVel;
 		this.delay=delay;
 		this.lastSpawn=0;
+		
 		try {
+			if(whichdir==1)
 			image = ImageIO.read(new File("resources/sawshooter.png"));
+			else
+			image = ImageIO.read(new File("resources/sawshooter2.png"));	
 		} catch (IOException e) {e.printStackTrace();}
 		xscroll=0;
 		yscroll=0;

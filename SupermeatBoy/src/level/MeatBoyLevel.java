@@ -1,4 +1,5 @@
 package level;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -35,17 +36,21 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private ArrayList<BuzzSaw> sawlist;
 	private ArrayList<DisappearPlat> originaldplist;
 	private ArrayList<DisappearPlat> dplist;
-	private ArrayList<SawShooter > sslist;
+	private ArrayList<SawShooter> sslist;
 	private int xscroll;
 	private int yscroll;
 	private BufferedImage entirebackground;
 	private BufferedImage subbackground;
 	private TileMap tmap;
 	private boolean finished;
+	private int deathCounter;
+	public static int BUFFER=40; //buffer of two tiles for spawning purposes
+	
 	public MeatBoyLevel(MeatBoyFrame frame)   {
+		deathCounter=0;
 		frame_height=frame.getHeight()-40;
  		frame_width=frame.getWidth();
-		String src = "resources/forest7.tmx";	//change this to try other levels
+		String src = "resources/forest5.tmx";	//change this to try other levels
 		tmap = new TileMap(new File(src));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
@@ -54,7 +59,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		subbackground=null;
 		width=tmap.getNumCols()*TileMap.TILE_SIZE;
 		height=tmap.getNumRows()*TileMap.TILE_SIZE;
-		
+ 		
 		platformList=tmap.getPlatforms();
 		sawlist=tmap.getSaws();
 		originaldplist=new ArrayList<DisappearPlat>(tmap.getDPs());
@@ -62,11 +67,13 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		sslist=tmap.getSS(); //ss means sawshooter
 		player = new MeatBoy(frame,this, mbxstart,mbystart);	
 		destination = tmap.getBandageGirl();
-		//start updating this level
 		time=new Timer(40,this);
+		//start updating this level
+		start();
+	}
+	public void start(){
 		time.start(); 
 
-		
 	}
 	public void update(){
 		if(!finished){
@@ -98,18 +105,35 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 					);
 				}
 			}
+			
 			for(int i=0;i<sawlist.size();i++){
-
 				sawlist.get(i).getAnimation().update();
 				sawlist.get(i).setXScroll(xscroll);
 				sawlist.get(i).setYScroll(yscroll);
 				if(sawlist.get(i).isMoving()){
 					sawlist.get(i).move();
-					if(sawlist.get(i).getX()>width||sawlist.get(i).getY()>height||sawlist.get(i).getY()<0 ||sawlist.get(i).getX()<0){
-						sawlist.remove(i);
+					boolean removed = false;
+					if(sawlist.get(i).canRemove()){
+						if(sawlist.get(i).getX()>width||sawlist.get(i).getY()>height){
+							sawlist.remove(i);
+							removed=true;
+							System.out.println("sup");
+						}
+						else{
+							ArrayList<Platform> tmplist = new ArrayList<Platform>();
+							tmplist.addAll(platformList);
+							tmplist.addAll(dplist);
+							for(int j=0;j<tmplist.size()&&!removed;j++){
+								if(checkCircleCollision(sawlist.get(i), tmplist.get(j))){
+									sawlist.remove(i);
+									removed=true;
+								}
+							}
+							
+						}
 					}
+					
 				}
-			
 			}
 			for(int i=0;i<dplist.size();i++){
 				dplist.get(i).setXScroll(xscroll);
@@ -159,6 +183,22 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 					iter.remove();
 				}
 			}
+			g.setColor(Color.red);
+			g.drawString("Deaths: "+deathCounter,550,40);
+	}
+	public boolean checkCircleCollision(BuzzSaw s, Platform p){
+		double closestx = clamp(s.getXMiddle(),p.getLeft(), p.getRight());
+		double closesty = clamp(s.getYMiddle(),p.getTop(),p.getBottom());
+		double dx=s.getXMiddle()-closestx;
+		double dy=s.getYMiddle()-closesty;
+		double distance = (Math.pow(dx,2)+Math.pow(dy, 2));
+		return distance<=(s.getRadius()*s.getRadius());
+	}
+	private double clamp(double value, int min, int max){
+		return Math.max(min, Math.min(max,value));
+	}
+	public void incrementDeathCounter(){
+		deathCounter++;
 	}
 	public ArrayList<Platform> getPlatforms(){
 		return platformList;

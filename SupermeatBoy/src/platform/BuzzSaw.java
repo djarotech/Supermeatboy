@@ -21,17 +21,19 @@ public class BuzzSaw {
 	private int yscroll;
 	private BufferedImage[] arr;
 	private boolean moving;
+	private int removable; // should start being removed after it moves 3 ticks because it could spawn inside of a wall.
 	public BuzzSaw(int x,int y, double diameter){
 		xscroll=0;
 		yscroll=0;
 		bigimage = null;
 		
 		try {
-			bigimage = ImageIO.read(new File("resources/buzzsaw.png"));
+			bigimage = ImageIO.read(new File("resources/buzzsaw2.png"));
 		} catch (IOException e) {e.printStackTrace();}
 		
 		rotateAnimation = new Animation();
 		moving=false;
+		removable=0;
 		xVel=0;
 		yVel=0;
 		arr = new BufferedImage[3];
@@ -70,7 +72,7 @@ public class BuzzSaw {
 		this.yVel=yVel;
 		moving=true;
 		try {
-			bigimage = ImageIO.read(new File("resources/buzzsaw.png"));
+			bigimage = ImageIO.read(new File("resources/buzzsaw2.png"));
 		} catch (IOException e) {e.printStackTrace();}
 		rotateAnimation = new Animation();
 		arr = new BufferedImage[3];
@@ -102,8 +104,12 @@ public class BuzzSaw {
 		this.radius=this.diameter/2;
 	}
 	public void move(){
+		removable++;
 		x+=xVel;
 		y+=yVel;
+	}
+	public boolean canRemove(){
+		return removable>3;
 	}
 	public Animation getAnimation(){
 		return rotateAnimation;
