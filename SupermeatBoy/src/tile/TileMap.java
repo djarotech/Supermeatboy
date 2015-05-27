@@ -1,3 +1,10 @@
+/*Super Meat Boy
+ *Kevin Mao
+ *Ritchie Chen
+ *Daniel Moore
+ *CS3 Final project
+ *Gallatin-3rd
+ */
 package tile;
 
 import java.awt.AlphaComposite;
@@ -24,6 +31,9 @@ import platform.DisappearPlat;
 import platform.Platform;
 import platform.SawShooter;
 
+/**
+ * The TileMap class is used to hold the information parsed from a tmx file
+ */
 public class TileMap {
 	public static final int TILE_SIZE= 20;
 	private TileSet ts;
@@ -47,7 +57,10 @@ public class TileMap {
 	private int mbxstart;
 	private int mbystart;
 	private ArrayList<SawShooter> sslist;
-	
+	/**
+	 * Creates a new TileMap object that parses a specified tmx file
+	 * @param tmx The tmx file to read from
+	 */
 	public TileMap(File tmx){
 		stationaryplats=new ArrayList<Platform>();
 		saws=new ArrayList<BuzzSaw>();
@@ -73,6 +86,10 @@ public class TileMap {
 			loadMap();
 		} catch (XPathExpressionException | SAXException| ParserConfigurationException | IOException e) {e.printStackTrace();}
 	}
+	/**
+	 * Draws the map 
+	 * @return A BufferedImage that contains the map 
+	 */
 	public BufferedImage drawMap(){
 		BufferedImage bfImage=new BufferedImage(numCols*TILE_SIZE,numRows*TILE_SIZE,BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D)bfImage.getGraphics();
@@ -122,6 +139,13 @@ public class TileMap {
 		g.dispose();
 		return bfImage;
 	}
+	/**
+	 * Parses the tmx file 
+	 * @throws XPathExpressionException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 */
 	public void loadMap() throws XPathExpressionException, SAXException, ParserConfigurationException, IOException{
 		int numLayers = Integer.parseInt(path.evaluate("count(/map/layer)", doc));
 		int r,c,gidNumber,whichTile;
@@ -226,38 +250,78 @@ public class TileMap {
 			}
 		}
 	}
+	/**
+	 * Trims a string of any extraneous space after a period
+	 * @param s The String to trim
+	 * @return The trimmed String
+	 */
 	private String trim(String s){
 		if(s.contains(".")){
 			s=s.substring(0,s.indexOf("."));
 		}
 		return s;
 	}
+	/**
+	 * Returns the ArrayList of Platforms parsed from the tmx file
+	 * @return The ArrayList of Platforms parsed from the tmx file
+	 */
 	public ArrayList<Platform> getPlatforms(){
 		return stationaryplats;
 	}
+	/**
+	 * Returns the ArrayList of Saws parsed from the tmx file
+	 * @return The ArrayList of Saws parsed from the tmx file
+	 */
 	public ArrayList<BuzzSaw> getSaws(){
 		return saws;
 	}
+	/**
+	 * Returns the ArrayList of Disappearing Platforms parsed from the tmx file
+	 * @return The ArrayList of Disappearing Platforms parsed from the tmx file
+	 */
 	public ArrayList<DisappearPlat> getDPs(){
 		return dplist;
 	}
+	/**
+	 * Returns the ArrayList of SawShooters parsed from the tmx file
+	 * @return The ArrayList of SawShooters parsed from the tmx file
+	 */
 	public ArrayList<SawShooter> getSS(){
 		return sslist;
 	}
+	/**
+	 * Returns the number of columns in the TileMap
+	 * @return The number of columns in the TileMap
+	 */
 	public int getNumCols(){
 		return numCols;
 	}
+	/**
+	 * Returns the number of rows in the TileMap
+	 * @return The number of rows in the TileMap
+	 */
 	public int getNumRows(){
 		return numRows;
 	}
+	/**
+	 * Returns the x position of the player's starting spot
+	 * @return The x position of the player's starting spot
+	 */
 	public int getXStart() {
 		return mbxstart;
 	}
+	/**
+	 * Returns the y position of the player's starting spot
+	 * @return The y position of the player's starting spot
+	 */
 	public int getYStart() {
 		return mbystart;
 	}
+	/**
+	 * Returns the BandageGirl object parsed from the tmx file
+	 * @return The BandageGirl object parsed from the tmx file
+	 */
 	public BandageGirl getBandageGirl() {
-		// TODO Auto-generated method stub
 		return bandagegirl;
 	}
 }
