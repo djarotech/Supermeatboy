@@ -1,4 +1,5 @@
 package character;
+
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -21,9 +22,10 @@ import platform.SawShooter;
 import level.MeatBoyLevel;
 import input.MeatBoyInput;
 
-
-public class MeatBoy {
-	
+/**
+ * MeatBoy is the player's character. He has a variety of movements such as sprinting and wall jumping.
+ */
+public class MeatBoy {	
 	//Communicating with:
 	private MeatBoyLevel level;
 	private MeatBoyInput input;
@@ -64,12 +66,17 @@ public class MeatBoy {
 	//touching wall restrictions
 	private boolean cannotLeft;
 	private boolean cannotRight;
-	private boolean touchingBottom;
-	
+	private boolean touchingBottom;	
 
     private double gravity;
 	
-    
+    /**
+     * Creates a new MeatboyObject with a specified starting position and various speed and acceleration values
+     * @param frame The MeatBoyFrame that MeatBoy will be in
+     * @param lev The MeatBoyLevel that MeatBoy will be in
+     * @param x MeatBoy's starting x position in the level
+     * @param y MeatBoy's starting y position in the level
+     */
 	public MeatBoy(MeatBoyFrame frame,MeatBoyLevel lev,int x, int y) {
 		cannotLeft = false;
 		cannotRight = false;
@@ -115,6 +122,10 @@ public class MeatBoy {
 		currentState=meatboy;
 		input= new MeatBoyInput(frame);
 	}
+	/**
+	 * MeatBoy communicates with the MeatBoyInput class to determine how he will move across the screen.
+	 * His moving and falling speed are affected by acceleration values to simulate gravity.
+	 */
 	public void move(){
 		currentState=meatboy;
 		if(!alive){
@@ -259,6 +270,10 @@ public class MeatBoy {
 		yscroll=yPos;
 		
 	}
+	/**
+	 * Draws the death animation when necessary
+	 * @param g The graphics object to draw with
+	 */
 	public void drawAnimation(Graphics g) {
 		while(!deathanimation.hasLooped()){
 				deathanimation.update();
@@ -276,6 +291,9 @@ public class MeatBoy {
 		}
 		deathanimation.resetAnimation();
 	}
+	/**
+	 * Checks for saw and platform collisions, and sets MeatBoy's position accordingly
+	 */
 	public void checkCollisions(){
 		dplist=level.getDPs();
 		int counter=0;
@@ -347,6 +365,11 @@ public class MeatBoy {
 			}
 		}
 	}
+	/**
+	 * A helper method for the checkCollisions method to find circular buzzsaw collisions
+	 * @param s The BuzzSaw to compare hitboxes against
+	 * @return Whether or not MeatBoy has collided against the saw
+	 */
 	public boolean checkCircleCollision(BuzzSaw s){
 		double closestx = clamp(s.getXMiddle(),hitbox.x, hitbox.x+MEATBOY_WIDTH);
 		double closesty = clamp(s.getYMiddle(),hitbox.y, hitbox.y+MEATBOY_HEIGHT);
@@ -355,9 +378,19 @@ public class MeatBoy {
 		double distance = (Math.pow(dx,2)+Math.pow(dy, 2));
 		return distance<=(s.getRadius()*s.getRadius());
 	}
+	/**
+	 * A helper method to make the hitboxes more precise
+	 * @param value The value to compare
+	 * @param min The minimum value 
+	 * @param max The maximum value
+	 * @return The most accurate value
+	 */
 	private double clamp(double value, int min, int max){
 		return Math.max(min, Math.min(max,value));
 	}
+	/**
+	 * Resets MeatBoy's position by sending him back to the beginning of the level
+	 */
 	public void restart(){
 //		if(!alive){
 //			level.setDeath(true);
@@ -372,6 +405,10 @@ public class MeatBoy {
 		yVel=0;
 		inAir = true;
 	}
+	/**
+	 * Draws MeatBoy 
+	 * @param g The graphics object to draw with
+	 */
 	public void draw(Graphics g){
 		g.drawImage(
 			currentState,
@@ -380,36 +417,79 @@ public class MeatBoy {
 			null
 		);
 	}
+	/**
+	 * Returns the hitbox of MeatBoy
+	 * @return The hitbox of MeatBoy
+	 */
 	public Rectangle getHitbox(){
 		return hitbox;
 	}
+	/**
+	 * Returns the bottom hitbox of MeatBoy
+	 * @return The bottom hitbox of MeatBoy
+	 */
 	public Rectangle getBotHitbox(){
 		return botHitBox;
 	}
+	/**
+	 * Returns true if MeatBoy is still alive
+	 * @return Whether or not MeatBoy is alive
+	 */
 	public boolean isAlive(){
 		return alive;
 	}
+	/**
+	 * Returns MeatBoy's x position
+	 * @return MeatBoy's x position
+	 */
 	public int getX(){
 		return xPos;
 	}
+	/**
+	 * Returns MeatBoy's y position
+	 * @return MeatBoy's y position
+	 */
 	public int getY(){
 		return yPos;
 	}
+	/**
+	 * Returns true is MeatBoy is in the air
+	 * @return Whether or not MeatBoy is in the air
+	 */
 	public boolean isInAir(){
 		return inAir;
 	}
+	/**
+	 * Sets MeatBoy to being in the air
+	 */
 	public void setInAir(){
 		inAir=true;
 	}
+	/**
+	 * Returns the amount of horizontal scrolling 
+	 * @return The amount of horizontal scrolling
+	 */
 	public int getXScroll(){
 		return xscroll;
 	}
+	/**
+	 * Returns the amount of vertical scrolling 
+	 * @return The amount of vertical scrolling
+	 */
 	public int getYScroll(){
 		return yscroll;
 	}
+	/**
+	 * Sets the amount of horizontal scrolling
+	 * @param x The amount of horizontal scrolling
+	 */
 	public void setXScroll(int x ){
 		xscroll=x;
 	}
+	/**
+	 * Sets the amount of vertical scrolling
+	 * @param x The amount of vertical scrolling
+	 */
 	public void setYScroll(int y){
 		yscroll=y;
 	}

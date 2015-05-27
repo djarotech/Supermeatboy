@@ -1,4 +1,5 @@
 package level;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -21,7 +22,9 @@ import app.MeatBoyFrame;
 import character.MeatBoy;
 import character.BandageGirl;
 
-
+/**
+ * The MeatBoyLevel class reads in a .tmx file and creates a level using the platform locations and tilesets specified within the tmx file
+ */
 public class MeatBoyLevel extends JPanel implements ActionListener{
 	private Timer time;
 	private MeatBoy player;
@@ -46,6 +49,10 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 	private int deathCounter;
 	public static int BUFFER=40; //buffer of two tiles for spawning purposes
 	
+	/**
+	 * Creates a new level based on a specified tmx file 
+	 * @param frame The MeatBoyFrame to place the level on
+	 */
 	public MeatBoyLevel(MeatBoyFrame frame)   {
 		deathCounter=0;
 		frame_height=frame.getHeight()-40;
@@ -71,10 +78,16 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		//start updating this level
 		start();
 	}
+	/**
+	 * Starts the level by beginning the timer, which will advance the level 
+	 */
 	public void start(){
 		time.start(); 
 
 	}
+	/**
+	 * Updates the status of all current objects in the level, such as MeatBoy, platforms, disappearing platforms, saws, and saw shooters
+	 */
 	public void update(){
 		if(!finished){
 			if(player.getHitbox().intersects(destination.getHitbox())){
@@ -144,6 +157,10 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 			}
 		}
 	}
+	/**
+	 * Draws all necessary objects onto the level
+	 * @param g The graphics object to draw with
+	 */
 	public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			subbackground = entirebackground.getSubimage(xscroll,yscroll, width<frame_width?width:frame_width, height<frame_height?height:frame_height)	;
@@ -186,6 +203,12 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 			g.setColor(Color.red);
 			g.drawString("Deaths: "+deathCounter,550,40);
 	}
+	/**
+	 * Checks for player collisions with the circular buzzsaws
+	 * @param s The BuzzSaw to check collisions with
+	 * @param p The Platform to check collisions with
+	 * @return
+	 */
 	public boolean checkCircleCollision(BuzzSaw s, Platform p){
 		double closestx = clamp(s.getXMiddle(),p.getLeft(), p.getRight());
 		double closesty = clamp(s.getYMiddle(),p.getTop(),p.getBottom());
@@ -194,27 +217,60 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		double distance = (Math.pow(dx,2)+Math.pow(dy, 2));
 		return distance<=(s.getRadius()*s.getRadius());
 	}
+	/**
+	 * A helper method to calculate more accurate hitboxes
+	 * @param value The value to compare with
+	 * @param min The minimum value
+	 * @param max The maximum value
+	 * @return The most accurate value
+	 */
 	private double clamp(double value, int min, int max){
 		return Math.max(min, Math.min(max,value));
 	}
+	/**
+	 * Increments the death counter by one
+	 */
 	public void incrementDeathCounter(){
 		deathCounter++;
 	}
+	/**
+	 * Returns an ArrayList of the platforms in the level
+	 * @return The platforms in the level
+	 */
 	public ArrayList<Platform> getPlatforms(){
 		return platformList;
 	}
+	/**
+	 * Returns an ArrayList of the buzzsaws in the level
+	 * @return The buzzsaws in the level
+	 */
 	public ArrayList<BuzzSaw> getSaws(){
 		return sawlist;
 	}	
+	/**
+	 * Returns an ArrayList of the disappearing platforms in the level
+	 * @return The disappearing platforms in the level
+	 */
 	public ArrayList<DisappearPlat> getDPs(){
 		return dplist;
 	}
+	/**
+	 * Returns an ArrayList of the saw shooters in the level
+	 * @return The saw shooters in the level
+	 */
 	public ArrayList<SawShooter> getSS(){
 		return sslist;
 	}
+	/**
+	 * Returns an ArrayList of the original list of disappearing platforms in the level, before they had disappeared
+	 * @return The original list of disappearing platforms
+	 */
 	public ArrayList<DisappearPlat> getOriginalDPs(){
 		return new ArrayList<>(originaldplist);
 	}	
+	/**
+	 * Resets the disappearing platforms, causing disappeared ones to come back
+	 */
 	public void resetDPs(){
 		for(DisappearPlat d:originaldplist){
 			d.getAnimation().resetAnimation();
@@ -222,19 +278,39 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
 		}
 		dplist=new ArrayList<DisappearPlat>(originaldplist);
 	}
+	/**
+	 * When called, updates the level and repaints it
+	 * @param e The ActionEvent that is called (not used)
+	 */
 	public void actionPerformed(ActionEvent e){
 		update();
 		repaint();
 	}
+	/**
+	 * Returns the width of the level
+	 * @return The width of the level
+	 */
 	public int getWidth(){
 		return width;
 	}
+	/**
+	 * Returns the height of the level
+	 * @return The height of the level
+	 */
 	public int getHeight(){
 		return height;
 	}
+	/**
+	 * Returns the horizontal scrolling for the level
+	 * @return The horizontal scrolling for the level
+	 */
 	public int getXScroll(){
 		return xscroll;
 	}
+	/**
+	 * Returns the vertical scrolling for the level
+	 * @return The vertical scrolling for the level
+	 */
 	public int getYScroll(){
 		return yscroll;
 	}

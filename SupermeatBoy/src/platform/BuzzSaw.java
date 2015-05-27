@@ -8,6 +8,9 @@ import javax.imageio.ImageIO;
 
 import animation.Animation;
 
+/**
+ * BuzzSaw objects act as an obstacle to the player. When MeatBoy touches them, he dies and is forced to restart the level
+ */
 public class BuzzSaw {
 	private BufferedImage bigimage;
 	private Animation rotateAnimation;
@@ -22,6 +25,13 @@ public class BuzzSaw {
 	private BufferedImage[] arr;
 	private boolean moving;
 	private int removable; // should start being removed after it moves 3 ticks because it could spawn inside of a wall.
+	
+	/**
+	 * Creates a new stationary BuzzSaw object with a specified location, and size
+	 * @param x The x position of the saw's top left corner
+	 * @param y The y position of the saw's top left corner
+	 * @param diameter The diameter of the saw
+	 */
 	public BuzzSaw(int x,int y, double diameter){
 		xscroll=0;
 		yscroll=0;
@@ -64,6 +74,14 @@ public class BuzzSaw {
 		this.diameter=diameter;
 		this.radius=this.diameter/2;
 	}
+	/**
+	 * Creates a new moving BuzzSaw object with a specified location, size, and speed
+	 * @param x The x position of the saw's top left corner
+	 * @param y The y position of the saw's top left corner
+	 * @param diameter The diameter of the saw
+	 * @param xVel The horizontal velocity of the saw
+	 * @param yVel The vertical velocity of the saw
+	 */
 	public BuzzSaw(int x,int y, double diameter, int xVel, int yVel){
 		xscroll=0;
 		yscroll=0;
@@ -103,38 +121,81 @@ public class BuzzSaw {
 		this.diameter=diameter;
 		this.radius=this.diameter/2;
 	}
+	/**
+	 * Moves the BuzzSaw 
+	 */
 	public void move(){
 		removable++;
 		x+=xVel;
 		y+=yVel;
 	}
+	/**
+	 * Returns true if the buzzsaw is removable
+	 * @return Whether or not the buzzsaw is removable
+	 */
 	public boolean canRemove(){
 		return removable>3;
 	}
+	/**
+	 * Returns the Animation object related to the saw
+	 * @return The Animation object related to the saw
+	 */
 	public Animation getAnimation(){
 		return rotateAnimation;
 	}
+	/**
+	 * Returns the x position of the saw's top left corner
+	 * @return The x position of the saw's top left corner
+	 */
 	public int getX(){
 		return x-xscroll;
 	}
+	/**
+	 * Returns the y position of the saw's top left corner
+	 * @return The y position of the saw's top left corner
+	 */
 	public int getY(){
 		return y-yscroll;
 	}
+	/**
+	 * Returns the x position of the middle of the saw
+	 * @return The x postion of the middle of the saw
+	 */
 	public double getXMiddle(){
 		return x+radius;
 	}
+	/**
+	 * Returns the y position of the middle of the saw
+	 * @return The y position of the middle of the saw
+	 */
 	public double getYMiddle(){
 		return y+radius;
 	}
+	/**
+	 * Returns the radius of the saw
+	 * @return The radius of the saw
+	 */
 	public double getRadius(){
 		return radius;
 	}
+	/**
+	 * Sets the horizontal scrolling to a specified value
+	 * @param x The specified horizontal scrolling
+	 */
 	public void setXScroll(int x){
 		xscroll=x;
 	}
+	/**
+	 * Sets the vertical scrolling to a specified value
+	 * @param y The specified vertical scrolling
+	 */
 	public void setYScroll(int y){
 		yscroll=y;
 	}
+	/**
+	 * Returns true if the saw is currently moving
+	 * @return Whether or not the saw is moving
+	 */
 	public boolean isMoving(){
 		return moving;
 	}
