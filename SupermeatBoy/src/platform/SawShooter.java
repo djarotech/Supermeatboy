@@ -52,9 +52,9 @@ public class SawShooter extends Platform{
 		
 		try {
 			if(whichdir==1)
-			image = ImageIO.read(new File("resources/sawshooter.png"));
+			image = ImageIO.read(getClass().getResource("/resources/sawshooter.png"));
 			else
-			image = ImageIO.read(new File("resources/sawshooter2.png"));	
+			image = ImageIO.read(getClass().getResource("/resources/sawshooter2.png"));	
 		} catch (IOException e) {e.printStackTrace();}
 		xscroll=0;
 		yscroll=0;

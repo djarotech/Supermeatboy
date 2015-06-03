@@ -59,6 +59,7 @@ public class MeatBoyFrame extends JFrame implements ActionListener{
 	private JButton gotocredits;
 	private JButton gotocontrols;
 	private int position;
+	private Image imgicon;
 	private int x;
 	private int y;
 	private int counter;
@@ -83,17 +84,17 @@ public class MeatBoyFrame extends JFrame implements ActionListener{
 		input = new MeatBoyInput(this);
 		forestLevels = new TreeMap<String,String>();
 		factoryLevels = new TreeMap<String,String>();
-		Image imgicon=Toolkit.getDefaultToolkit().createImage("resources/meatboystanding.png");
 		try{
-			meatboyimg =ImageIO.read(new File("resources/meatboystanding.png"));
-			forestlsimage= ImageIO.read(new File("resources/forestlevelselect.png"));
-			factorylsimage= ImageIO.read(new File("resources/factorylevelselect.png"));
-			loadingscreen= ImageIO.read(new File("resources/loadingscreen.png"));
-			menuscreen= ImageIO.read(new File("resources/titlescreen.png"));
+			imgicon=ImageIO.read(getClass().getClassLoader().getResource("meatboystanding.png"));
+			meatboyimg =ImageIO.read(getClass().getClassLoader().getResource("meatboystanding.png"));
+			forestlsimage= ImageIO.read(getClass().getClassLoader().getResource("forestlevelselect.png"));
+			factorylsimage= ImageIO.read(getClass().getClassLoader().getResource("factorylevelselect.png"));
+			loadingscreen= ImageIO.read(getClass().getClassLoader().getResource("loadingscreen.png"));
+			menuscreen= ImageIO.read(getClass().getClassLoader().getResource("titlescreen.png"));
 		}catch(Exception e){e.printStackTrace();}
 		for(int i=1;i<=8;i++){
-			forestLevels.put("forest"+i, "resources/forest"+i+".tmx");
-			factoryLevels.put("factory"+i, "resources/factory"+i+".tmx");
+			forestLevels.put("forest"+i, "forest"+i+".tmx");
+			factoryLevels.put("factory"+i, "factory"+i+".tmx");
 		}
 		state = State.MAINMENU;
 		gotoforest = new JButton("To the Forest");

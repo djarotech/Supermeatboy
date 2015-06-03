@@ -97,7 +97,7 @@ public class BuzzSaw {
 		this.yVel=yVel;
 		moving=true;
 		try {
-			bigimage = ImageIO.read(new File("resources/buzzsaw2.png"));
+			bigimage = ImageIO.read(getClass().getResource("/resources/buzzsaw2.png"));
 		} catch (IOException e) {e.printStackTrace();}
 		rotateAnimation = new Animation();
 		arr = new BufferedImage[3];

@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -41,7 +42,7 @@ public class TileMap {
 	private Tile[][] background;
 	private Tile[][] foreground;
 	private Tile[][] stationary;
-	private File tmxfile;
+	private URL tmxfile;
 	private ArrayList<Platform> stationaryplats;
 	private ArrayList<BuzzSaw> saws;
 	private ArrayList<DisappearPlat> dplist;
@@ -59,22 +60,23 @@ public class TileMap {
 	private ArrayList<SawShooter> sslist;
 	/**
 	 * Creates a new TileMap object that parses a specified tmx file
-	 * @param tmx The tmx file to read from
+	 * @param url The tmx file to read from
 	 */
-	public TileMap(File tmx){
+	public TileMap(URL url){
 		stationaryplats=new ArrayList<Platform>();
 		saws=new ArrayList<BuzzSaw>();
 		dplist=new ArrayList<DisappearPlat>();
 		sslist=new ArrayList<SawShooter>();
-		tmxfile=tmx;
+		tmxfile=url;
 		
 		try{
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 			xpfactory = XPathFactory.newInstance();
 	      	path = xpfactory.newXPath();
-	      	doc = builder.parse(tmxfile);
-			ts = new TileSet(TILE_SIZE,TILE_SIZE,tmx);
+	      	System.out.println(tmxfile.getPath());
+	      	doc = builder.parse(tmxfile.getPath());
+			ts = new TileSet(TILE_SIZE,TILE_SIZE,url);
 			alltiles=ts.getTiles();
 			numRows=Integer.parseInt(path.evaluate("/map/@height",doc));
 			numCols=Integer.parseInt(path.evaluate("/map/@width",doc));
@@ -101,7 +103,7 @@ public class TileMap {
 		}
 		
 		
-		if(tmxfile.getAbsolutePath().contains("factory")){
+		if(tmxfile.getPath().contains("factory")){
 			float opacity = 0.6f;
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 			for(int r=0;r<numRows;r++){

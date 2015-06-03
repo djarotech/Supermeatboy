@@ -112,9 +112,9 @@ public class MeatBoy {
 		
 		deathanimation = new Animation();
 		try{
-		meatboy =ImageIO.read(new File("resources/meatboystanding.png"));
-		sprintleft =ImageIO.read(new File("resources/sprintLeft.png"));
-		sprintright =ImageIO.read(new File("resources/sprintRight.png"));
+		meatboy =ImageIO.read(getClass().getClassLoader().getResource("meatboystanding.png"));
+		sprintleft =ImageIO.read(getClass().getClassLoader().getResource("sprintLeft.png"));
+		sprintright =ImageIO.read(getClass().getClassLoader().getResource("sprintRight.png"));
 		}catch (IOException e) {e.printStackTrace();}
 		
 		currentState=meatboy;

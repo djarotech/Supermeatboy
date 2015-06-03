@@ -69,7 +69,7 @@ public class MeatBoyLevel extends JPanel implements ActionListener{
  		frame_width=frame.getWidth();
  		fp=src;
  		this.frame=frame;
-		tmap = new TileMap(new File(fp));
+		tmap = new TileMap(this.getClass().getClassLoader().getResource(fp));
 		entirebackground = tmap.drawMap();
 		destination = tmap.getBandageGirl();
 		mbxstart = tmap.getXStart();
