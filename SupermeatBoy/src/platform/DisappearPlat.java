@@ -46,7 +46,7 @@ public class DisappearPlat extends Platform {
 		animation = new Animation();
 		arr = new BufferedImage[11];	
 		try {
-			bigimage = ImageIO.read(getClass().getResource("/resources/disappearing.png"));
+			bigimage = ImageIO.read(new File("resources/disappearing.png"));
 		} catch (IOException e) {e.printStackTrace();}
 		for(int i=0;i<11;i++){
 			arr[i]=bigimage.getSubimage(i*41, 0, 41, 80);

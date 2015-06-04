@@ -85,12 +85,12 @@ public class MeatBoyFrame extends JFrame implements ActionListener{
 		forestLevels = new TreeMap<String,String>();
 		factoryLevels = new TreeMap<String,String>();
 		try{
-			imgicon=ImageIO.read(getClass().getClassLoader().getResource("meatboystanding.png"));
-			meatboyimg =ImageIO.read(getClass().getClassLoader().getResource("meatboystanding.png"));
-			forestlsimage= ImageIO.read(getClass().getClassLoader().getResource("forestlevelselect.png"));
-			factorylsimage= ImageIO.read(getClass().getClassLoader().getResource("factorylevelselect.png"));
-			loadingscreen= ImageIO.read(getClass().getClassLoader().getResource("loadingscreen.png"));
-			menuscreen= ImageIO.read(getClass().getClassLoader().getResource("titlescreen.png"));
+			imgicon=ImageIO.read(new File("resources/meatboystanding.png"));
+			meatboyimg =ImageIO.read(new File("resources/meatboystanding.png"));
+			forestlsimage= ImageIO.read(new File("resources/forestlevelselect.png"));
+			factorylsimage= ImageIO.read(new File("resources/factorylevelselect.png"));
+			loadingscreen= ImageIO.read(new File("resources/loadingscreen.png"));
+			menuscreen= ImageIO.read(new File("resources/titlescreen.png"));
 		}catch(Exception e){e.printStackTrace();}
 		for(int i=1;i<=8;i++){
 			forestLevels.put("forest"+i, "forest"+i+".tmx");
