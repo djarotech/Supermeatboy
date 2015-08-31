@@ -1,34 +1,7 @@
-#To do: number of(*) means priority level
-
-*Fix small collision problems. Corners of platforms are glitchy.
-	
-*** different platforms 
-
-	-moving platforms
-
-	-add salt from the salt level
-	
-	-add lava
-
-	-add sawblade shooters
-
-	-add keys/locks
-
--more levels
-
--bandages
-
--fans
-
--AI, monsters that chase the player
-
--different characters. Altering their gravity, and attributes. May add things like double jump. Should add character select screen
-
--monsters , meatgirl , any other types of characters.
-
--*Gui front end
-
--*loading screen
-
-
+# To play Super meat boy
+1. Download the zip file off of github.
+2. Extract the zip file
+3. Open eclipse
+4. In eclipse do File > Import > General >Existing projects > Supermeatboy (the root directory where you extracted the zip)
+5. Now that Supermeatboy is imported, go to src > app > MeatboyFrame.java and hit run.
 
