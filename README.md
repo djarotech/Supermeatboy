@@ -5,3 +5,9 @@
 4. In eclipse do File > Import > General >Existing projects > Supermeatboy (the root directory where you extracted the zip)
 5. Now that Supermeatboy is imported, go to src > app > MeatboyFrame.java and hit run.
 
+Theres are 2 worlds Forest and Factory. Each has 8 levels, here are some of them!
+
+![alt tag](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot1.png)
+![alt tag](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot2.png)
+![alt tag](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot3.png)
+![alt tag](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot4.png)
