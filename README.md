@@ -7,7 +7,7 @@
 
 Theres are 2 worlds Forest and Factory. Each has 8 levels, here are some of them!
 
-![ScreenShot](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot1.png)
-![ScreenShot](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot2.png)
-![ScreenShot](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot3.png)
-![ScreenShot](https://github.com/danielm041297/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot4.png)
+![ScreenShot](/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot1.png?raw=true)
+![ScreenShot](/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot2.png?raw=true)
+![ScreenShot](/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot3.png?raw=true)
+![ScreenShot](/Supermeatboy/tree/master/SupermeatBoy/resources/screenshot4.png?raw=true)
