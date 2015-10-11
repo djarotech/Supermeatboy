@@ -32,6 +32,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 
 public class MeatBoyFrame extends JFrame implements ActionListener{
@@ -73,6 +75,17 @@ public class MeatBoyFrame extends JFrame implements ActionListener{
 	 *
 	 */
 	public MeatBoyFrame() {
+		try {
+		    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+		        if ("Nimbus".equals(info.getName())) {
+		            UIManager.setLookAndFeel(info.getClassName());
+		            break;
+		        }
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		setSize(640,500);
 		delay=300;
 		lastpress=0;
@@ -344,35 +357,35 @@ public class MeatBoyFrame extends JFrame implements ActionListener{
 			switch(position){
 				case 1:
 					x=90;
-					y=200;
+					y=160;
 					break;
 				case 2:
 					x=230;
-					y=200;
+					y=160;
 					break;
 				case 3:
 					x=387;
-					y=200;
+					y=160;
 					break;
 				case 4:
 					x=538;
-					y=200;
+					y=160;
 					break;
 				case 5:
 					x=537;
-					y=306;
+					y=270;
 					break;
 				case 6:
 					x=387;
-					y=313;
+					y=270;
 					break;
 				case 7:
 					x=240;
-					y=306;
+					y=270;
 					break;
 				case 8:
 					x=90;
-					y=311;
+					y=270;
 					break;
 			}
 		}
@@ -380,35 +393,35 @@ public class MeatBoyFrame extends JFrame implements ActionListener{
 			switch(position){
 				case 1:
 					x=103;
-					y=227;
+					y=190;
 					break;
 				case 2:
 					x=254;
-					y=230;
+					y=190;
 					break;
 				case 3:
 					x=405;
-					y=230;
+					y=190;
 					break;
 				case 4:
 					x=552;
-					y=224;
+					y=190;
 					break;
 				case 5:
 					x=556;
-					y=338;
+					y=300;
 					break;
 				case 6:
 					x=407;
-					y=334;
+					y=300;
 					break;
 				case 7:
 					x=253;
-					y=336;
+					y=300;
 					break;
 				case 8:
 					x=101;
-					y=340;
+					y=300;
 					break;
 		}
 		}
